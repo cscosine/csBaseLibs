@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from typing import Dict, List
+
 
 def checkout_func():
     from csProjectManager.projectManager import (
@@ -12,9 +14,11 @@ def checkout_func():
     repo_https_url = "https://api.github.com/repos/"
     branch = "cs-main"
 
-    _ = repo_https_url
-    _ = csRunCommand
-    _ = csGetPrecompiledLib
+    csRunCommand(
+        name="Install prerequisites for Linux",
+        command="./installRequirements-linux.sh",
+        os_name="linux",
+    )
 
     csGetRepository(
         repo_cs_url,
@@ -24,27 +28,49 @@ def checkout_func():
         needCMakeUserPathFile=False,
     )
 
-    _ = csGetRepository
-    _ = csRunCommand
-    _ = csGetPrecompiledLib
-    pass
+    # core lib
+    csGetRepository(repo_cs_url, "cscosine/csCore.git", "csCore", branch)
+
+    # math/computer vision libs
+    csGetRepository(repo_cs_url, "cscosine/csLie.git", "csLie", branch)
+    csGetRepository(repo_cs_url, "cscosine/csCamera.git", "csCamera", branch)
+
+    # a simple opengl + qt viewer
+    csGetRepository(repo_cs_url, "cscosine/csVisOpenGL.git", "csVisOpenGL", branch)
+
+    # 3rd party precompiled libraries
+    libs_os_presets: Dict[str, List[str]] = {
+        "linux": ["linux-ninja", "linux-ninja-multi-config-clang"],
+        "windows": ["msvc2022-x64", "msvc2022-x64-LLVM"],
+    }
+
+    list_3rdPartyBaseLibs = [
+        "eigen3",
+        "fmt",
+        "fmt-eigen",
+        "cpptrace",
+        "magic_enum",
+        "libassert",
+        "tclap",
+        "Catch2",
+        "pipes",
+        "NamedType",
+        "tl-optional",
+        "tl-expected",
+    ]
+
+    for lib in list_3rdPartyBaseLibs:
+        csGetPrecompiledLib(
+            repo_https_url + "cscosine",
+            "3rdPartyBaseLibs",
+            lib,
+            "v0.1.0-test",
+            libs_os_presets,
+        )
 
 
 def build_func():
     from csProjectManager.projectManager import csWorkflow
-
-    # for interface only libraries, generate a single configuration only (use release)
-    # note, use the {} to enable properly the -po option (preset only)
-    presetRelease = {
-        "linux": ["linux-ninja{release}", "linux-ninja-multi-config-clang"],
-        "windows": ["msvc2022-x64", "msvc2022-x64-LLVM"],
-    }
-
-    # use {debug|release}
-    presetDebugRelease = {
-        "linux": ["linux-ninja{debug|release}", "linux-ninja-multi-config-clang"],
-        "windows": ["msvc2022-x64", "msvc2022-x64-LLVM"],
-    }
 
     # use {debug|release|relWithDebInfo|paranoid}
     presetsAll = {
@@ -55,11 +81,12 @@ def build_func():
         "windows": ["msvc2022-x64", "msvc2022-x64-LLVM"],
     }
 
-    _ = presetRelease
-    _ = presetDebugRelease
-    _ = presetsAll
+    csWorkflow("csCore", presetsAll)
 
-    _ = csWorkflow
+    csWorkflow("csLie", presetsAll)
+    csWorkflow("csCamera", presetsAll)
+
+    csWorkflow("csVisOpenGL", presetsAll)
 
 
 ############################################################################################
