@@ -61,12 +61,32 @@ def checkout_func():
 
     for lib in list_3rdPartyBaseLibs:
         csGetPrecompiledLib(
-            repo_https_url + "cscosine",
-            "3rdPartyBaseLibs",
-            lib,
-            "v0.1.0-rc1",
-            libs_os_presets,
+            base_url=repo_https_url + "cscosine",
+            repo="3rdPartyBaseLibs",
+            libName=lib,
+            version="v0.1.0-rc2",
+            libs_os_presets=libs_os_presets,
         )
+
+    qt_presets_mapping: Dict[str, Dict[str, str]] = {
+        "linux": {
+            "linux-ninja": "linux-gcc",
+            "linux-ninja-multi-config-clang": "linux-gcc",
+        },
+        "windows": {
+            "msvc2022-x64": "windows-msvc2022-x64",
+            "msvc2022-x64-LLVM": "windows-msvc2022-x64",
+        },
+    }
+
+    csGetPrecompiledLib(
+        base_url=repo_https_url + "cscosine",
+        repo="csQt6",
+        libName="qt6",
+        version="v6.10.2",
+        libs_os_presets=libs_os_presets,
+        presets_mapping=qt_presets_mapping,
+    )
 
 
 def build_func():

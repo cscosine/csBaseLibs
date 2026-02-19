@@ -369,192 +369,208 @@ jobs:
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-eigen3-linux-linux-ninja.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-eigen3-linux-linux-ninja.tar.gz
         out-file-path: libs/linux-ninja
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract eigen3 bundle (linux/linux-ninja)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja/*.zip -d libs/linux-ninja
-        rm -f libs/linux-ninja/*.zip
+        tar -xzf libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-eigen3-linux-linux-ninja.tar.gz -C libs/linux-ninja
+        rm -f libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-eigen3-linux-linux-ninja.tar.gz
 
 
     - name: Download fmt bundle (linux/linux-ninja)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-fmt-linux-linux-ninja.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-linux-linux-ninja.tar.gz
         out-file-path: libs/linux-ninja
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract fmt bundle (linux/linux-ninja)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja/*.zip -d libs/linux-ninja
-        rm -f libs/linux-ninja/*.zip
+        tar -xzf libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-linux-linux-ninja.tar.gz -C libs/linux-ninja
+        rm -f libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-linux-linux-ninja.tar.gz
 
 
     - name: Download fmt-eigen bundle (linux/linux-ninja)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-fmt-eigen-linux-linux-ninja.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-eigen-linux-linux-ninja.tar.gz
         out-file-path: libs/linux-ninja
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract fmt-eigen bundle (linux/linux-ninja)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja/*.zip -d libs/linux-ninja
-        rm -f libs/linux-ninja/*.zip
+        tar -xzf libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-eigen-linux-linux-ninja.tar.gz -C libs/linux-ninja
+        rm -f libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-eigen-linux-linux-ninja.tar.gz
 
 
     - name: Download cpptrace bundle (linux/linux-ninja)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-cpptrace-linux-linux-ninja.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-cpptrace-linux-linux-ninja.tar.gz
         out-file-path: libs/linux-ninja
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract cpptrace bundle (linux/linux-ninja)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja/*.zip -d libs/linux-ninja
-        rm -f libs/linux-ninja/*.zip
+        tar -xzf libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-cpptrace-linux-linux-ninja.tar.gz -C libs/linux-ninja
+        rm -f libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-cpptrace-linux-linux-ninja.tar.gz
 
 
     - name: Download magic_enum bundle (linux/linux-ninja)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-magic_enum-linux-linux-ninja.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-magic_enum-linux-linux-ninja.tar.gz
         out-file-path: libs/linux-ninja
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract magic_enum bundle (linux/linux-ninja)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja/*.zip -d libs/linux-ninja
-        rm -f libs/linux-ninja/*.zip
+        tar -xzf libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-magic_enum-linux-linux-ninja.tar.gz -C libs/linux-ninja
+        rm -f libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-magic_enum-linux-linux-ninja.tar.gz
 
 
     - name: Download libassert bundle (linux/linux-ninja)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-libassert-linux-linux-ninja.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-libassert-linux-linux-ninja.tar.gz
         out-file-path: libs/linux-ninja
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract libassert bundle (linux/linux-ninja)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja/*.zip -d libs/linux-ninja
-        rm -f libs/linux-ninja/*.zip
+        tar -xzf libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-libassert-linux-linux-ninja.tar.gz -C libs/linux-ninja
+        rm -f libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-libassert-linux-linux-ninja.tar.gz
 
 
     - name: Download tclap bundle (linux/linux-ninja)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-tclap-linux-linux-ninja.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-tclap-linux-linux-ninja.tar.gz
         out-file-path: libs/linux-ninja
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract tclap bundle (linux/linux-ninja)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja/*.zip -d libs/linux-ninja
-        rm -f libs/linux-ninja/*.zip
+        tar -xzf libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-tclap-linux-linux-ninja.tar.gz -C libs/linux-ninja
+        rm -f libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-tclap-linux-linux-ninja.tar.gz
 
 
     - name: Download Catch2 bundle (linux/linux-ninja)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-Catch2-linux-linux-ninja.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-Catch2-linux-linux-ninja.tar.gz
         out-file-path: libs/linux-ninja
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract Catch2 bundle (linux/linux-ninja)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja/*.zip -d libs/linux-ninja
-        rm -f libs/linux-ninja/*.zip
+        tar -xzf libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-Catch2-linux-linux-ninja.tar.gz -C libs/linux-ninja
+        rm -f libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-Catch2-linux-linux-ninja.tar.gz
 
 
     - name: Download pipes bundle (linux/linux-ninja)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-pipes-linux-linux-ninja.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-pipes-linux-linux-ninja.tar.gz
         out-file-path: libs/linux-ninja
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract pipes bundle (linux/linux-ninja)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja/*.zip -d libs/linux-ninja
-        rm -f libs/linux-ninja/*.zip
+        tar -xzf libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-pipes-linux-linux-ninja.tar.gz -C libs/linux-ninja
+        rm -f libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-pipes-linux-linux-ninja.tar.gz
 
 
     - name: Download NamedType bundle (linux/linux-ninja)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-NamedType-linux-linux-ninja.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-NamedType-linux-linux-ninja.tar.gz
         out-file-path: libs/linux-ninja
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract NamedType bundle (linux/linux-ninja)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja/*.zip -d libs/linux-ninja
-        rm -f libs/linux-ninja/*.zip
+        tar -xzf libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-NamedType-linux-linux-ninja.tar.gz -C libs/linux-ninja
+        rm -f libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-NamedType-linux-linux-ninja.tar.gz
 
 
     - name: Download tl-optional bundle (linux/linux-ninja)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-tl-optional-linux-linux-ninja.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-optional-linux-linux-ninja.tar.gz
         out-file-path: libs/linux-ninja
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract tl-optional bundle (linux/linux-ninja)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja/*.zip -d libs/linux-ninja
-        rm -f libs/linux-ninja/*.zip
+        tar -xzf libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-optional-linux-linux-ninja.tar.gz -C libs/linux-ninja
+        rm -f libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-optional-linux-linux-ninja.tar.gz
 
 
     - name: Download tl-expected bundle (linux/linux-ninja)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-tl-expected-linux-linux-ninja.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-expected-linux-linux-ninja.tar.gz
         out-file-path: libs/linux-ninja
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract tl-expected bundle (linux/linux-ninja)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja/*.zip -d libs/linux-ninja
-        rm -f libs/linux-ninja/*.zip
+        tar -xzf libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-expected-linux-linux-ninja.tar.gz -C libs/linux-ninja
+        rm -f libs/linux-ninja/bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-expected-linux-linux-ninja.tar.gz
+
+
+    - name: Download qt6 bundle (linux/linux-ninja)
+      uses: robinraju/release-downloader@v1.10
+      with:
+        repository: cscosine/csQt6
+        tag: v6.10.2
+        fileName: bundle-csQt6-v6.10.2-qt6-linux-linux-gcc.tar.gz
+        out-file-path: libs/linux-ninja
+        token: ${{ secrets.ACTIONS_ORG_ACCESS }}
+
+    - name: Extract qt6 bundle (linux/linux-ninja)
+      shell: bash
+      run: |
+        tar -xzf libs/linux-ninja/bundle-csQt6-v6.10.2-qt6-linux-linux-gcc.tar.gz -C libs/linux-ninja
+        rm -f libs/linux-ninja/bundle-csQt6-v6.10.2-qt6-linux-linux-gcc.tar.gz
 
 
     # ---------------------------------------------------
@@ -577,68 +593,260 @@ jobs:
     # ---------------------------------------------------
     # build section
     - name: Build linux-linux-ninja-csCore (1 / 4)
-      run: cmake --workflow linux-ninja-debug
+      run: cmake --workflow linux-ninja-debug &> ../csCore-linux-linux-ninja-1-build_output.log
       working-directory: csCore
+
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csCore-linux-linux-ninja-1-build_output.log
+        path: csCore-linux-linux-ninja-1-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: tail -n 200 csCore-linux-linux-ninja-1-build_output.log
+      working-directory: .
 
     - name: Build linux-linux-ninja-csCore (2 / 4)
-      run: cmake --workflow linux-ninja-release
+      run: cmake --workflow linux-ninja-release &> ../csCore-linux-linux-ninja-2-build_output.log
       working-directory: csCore
+
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csCore-linux-linux-ninja-2-build_output.log
+        path: csCore-linux-linux-ninja-2-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: tail -n 200 csCore-linux-linux-ninja-2-build_output.log
+      working-directory: .
 
     - name: Build linux-linux-ninja-csCore (3 / 4)
-      run: cmake --workflow linux-ninja-relWithDebInfo
+      run: cmake --workflow linux-ninja-relWithDebInfo &> ../csCore-linux-linux-ninja-3-build_output.log
       working-directory: csCore
+
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csCore-linux-linux-ninja-3-build_output.log
+        path: csCore-linux-linux-ninja-3-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: tail -n 200 csCore-linux-linux-ninja-3-build_output.log
+      working-directory: .
 
     - name: Build linux-linux-ninja-csCore (4 / 4)
-      run: cmake --workflow linux-ninja-paranoid
+      run: cmake --workflow linux-ninja-paranoid &> ../csCore-linux-linux-ninja-4-build_output.log
       working-directory: csCore
 
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csCore-linux-linux-ninja-4-build_output.log
+        path: csCore-linux-linux-ninja-4-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: tail -n 200 csCore-linux-linux-ninja-4-build_output.log
+      working-directory: .
+
     - name: Build linux-linux-ninja-csLie (1 / 4)
-      run: cmake --workflow linux-ninja-debug
+      run: cmake --workflow linux-ninja-debug &> ../csLie-linux-linux-ninja-1-build_output.log
       working-directory: csLie
+
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csLie-linux-linux-ninja-1-build_output.log
+        path: csLie-linux-linux-ninja-1-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: tail -n 200 csLie-linux-linux-ninja-1-build_output.log
+      working-directory: .
 
     - name: Build linux-linux-ninja-csLie (2 / 4)
-      run: cmake --workflow linux-ninja-release
+      run: cmake --workflow linux-ninja-release &> ../csLie-linux-linux-ninja-2-build_output.log
       working-directory: csLie
+
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csLie-linux-linux-ninja-2-build_output.log
+        path: csLie-linux-linux-ninja-2-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: tail -n 200 csLie-linux-linux-ninja-2-build_output.log
+      working-directory: .
 
     - name: Build linux-linux-ninja-csLie (3 / 4)
-      run: cmake --workflow linux-ninja-relWithDebInfo
+      run: cmake --workflow linux-ninja-relWithDebInfo &> ../csLie-linux-linux-ninja-3-build_output.log
       working-directory: csLie
+
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csLie-linux-linux-ninja-3-build_output.log
+        path: csLie-linux-linux-ninja-3-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: tail -n 200 csLie-linux-linux-ninja-3-build_output.log
+      working-directory: .
 
     - name: Build linux-linux-ninja-csLie (4 / 4)
-      run: cmake --workflow linux-ninja-paranoid
+      run: cmake --workflow linux-ninja-paranoid &> ../csLie-linux-linux-ninja-4-build_output.log
       working-directory: csLie
 
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csLie-linux-linux-ninja-4-build_output.log
+        path: csLie-linux-linux-ninja-4-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: tail -n 200 csLie-linux-linux-ninja-4-build_output.log
+      working-directory: .
+
     - name: Build linux-linux-ninja-csCamera (1 / 4)
-      run: cmake --workflow linux-ninja-debug
+      run: cmake --workflow linux-ninja-debug &> ../csCamera-linux-linux-ninja-1-build_output.log
       working-directory: csCamera
+
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csCamera-linux-linux-ninja-1-build_output.log
+        path: csCamera-linux-linux-ninja-1-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: tail -n 200 csCamera-linux-linux-ninja-1-build_output.log
+      working-directory: .
 
     - name: Build linux-linux-ninja-csCamera (2 / 4)
-      run: cmake --workflow linux-ninja-release
+      run: cmake --workflow linux-ninja-release &> ../csCamera-linux-linux-ninja-2-build_output.log
       working-directory: csCamera
+
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csCamera-linux-linux-ninja-2-build_output.log
+        path: csCamera-linux-linux-ninja-2-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: tail -n 200 csCamera-linux-linux-ninja-2-build_output.log
+      working-directory: .
 
     - name: Build linux-linux-ninja-csCamera (3 / 4)
-      run: cmake --workflow linux-ninja-relWithDebInfo
+      run: cmake --workflow linux-ninja-relWithDebInfo &> ../csCamera-linux-linux-ninja-3-build_output.log
       working-directory: csCamera
+
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csCamera-linux-linux-ninja-3-build_output.log
+        path: csCamera-linux-linux-ninja-3-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: tail -n 200 csCamera-linux-linux-ninja-3-build_output.log
+      working-directory: .
 
     - name: Build linux-linux-ninja-csCamera (4 / 4)
-      run: cmake --workflow linux-ninja-paranoid
+      run: cmake --workflow linux-ninja-paranoid &> ../csCamera-linux-linux-ninja-4-build_output.log
       working-directory: csCamera
 
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csCamera-linux-linux-ninja-4-build_output.log
+        path: csCamera-linux-linux-ninja-4-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: tail -n 200 csCamera-linux-linux-ninja-4-build_output.log
+      working-directory: .
+
     - name: Build linux-linux-ninja-csVisOpenGL (1 / 4)
-      run: cmake --workflow linux-ninja-debug
+      run: cmake --workflow linux-ninja-debug &> ../csVisOpenGL-linux-linux-ninja-1-build_output.log
       working-directory: csVisOpenGL
+
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csVisOpenGL-linux-linux-ninja-1-build_output.log
+        path: csVisOpenGL-linux-linux-ninja-1-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: tail -n 200 csVisOpenGL-linux-linux-ninja-1-build_output.log
+      working-directory: .
 
     - name: Build linux-linux-ninja-csVisOpenGL (2 / 4)
-      run: cmake --workflow linux-ninja-release
+      run: cmake --workflow linux-ninja-release &> ../csVisOpenGL-linux-linux-ninja-2-build_output.log
       working-directory: csVisOpenGL
+
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csVisOpenGL-linux-linux-ninja-2-build_output.log
+        path: csVisOpenGL-linux-linux-ninja-2-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: tail -n 200 csVisOpenGL-linux-linux-ninja-2-build_output.log
+      working-directory: .
 
     - name: Build linux-linux-ninja-csVisOpenGL (3 / 4)
-      run: cmake --workflow linux-ninja-relWithDebInfo
+      run: cmake --workflow linux-ninja-relWithDebInfo &> ../csVisOpenGL-linux-linux-ninja-3-build_output.log
       working-directory: csVisOpenGL
 
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csVisOpenGL-linux-linux-ninja-3-build_output.log
+        path: csVisOpenGL-linux-linux-ninja-3-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: tail -n 200 csVisOpenGL-linux-linux-ninja-3-build_output.log
+      working-directory: .
+
     - name: Build linux-linux-ninja-csVisOpenGL (4 / 4)
-      run: cmake --workflow linux-ninja-paranoid
+      run: cmake --workflow linux-ninja-paranoid &> ../csVisOpenGL-linux-linux-ninja-4-build_output.log
       working-directory: csVisOpenGL
+
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csVisOpenGL-linux-linux-ninja-4-build_output.log
+        path: csVisOpenGL-linux-linux-ninja-4-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: tail -n 200 csVisOpenGL-linux-linux-ninja-4-build_output.log
+      working-directory: .
 
     # ---------------------------------------------------
 
@@ -657,19 +865,19 @@ jobs:
 
         (
           cd install/linux-ninja/
-          zip -r "$GITHUB_WORKSPACE/bundle-csBaseLibs-${VERSION}-csCore-linux-linux-ninja.zip" csCore
+          tar -czf "$GITHUB_WORKSPACE/bundle-csBaseLibs-${VERSION}-csCore-linux-linux-ninja.tar.gz" csCore
         )
         (
           cd install/linux-ninja/
-          zip -r "$GITHUB_WORKSPACE/bundle-csBaseLibs-${VERSION}-csLie-linux-linux-ninja.zip" csLie
+          tar -czf "$GITHUB_WORKSPACE/bundle-csBaseLibs-${VERSION}-csLie-linux-linux-ninja.tar.gz" csLie
         )
         (
           cd install/linux-ninja/
-          zip -r "$GITHUB_WORKSPACE/bundle-csBaseLibs-${VERSION}-csCamera-linux-linux-ninja.zip" csCamera
+          tar -czf "$GITHUB_WORKSPACE/bundle-csBaseLibs-${VERSION}-csCamera-linux-linux-ninja.tar.gz" csCamera
         )
         (
           cd install/linux-ninja/
-          zip -r "$GITHUB_WORKSPACE/bundle-csBaseLibs-${VERSION}-csVisOpenGL-linux-linux-ninja.zip" csVisOpenGL
+          tar -czf "$GITHUB_WORKSPACE/bundle-csBaseLibs-${VERSION}-csVisOpenGL-linux-linux-ninja.tar.gz" csVisOpenGL
         )
       shell: bash
     # ---------------------------------------------------
@@ -682,10 +890,10 @@ jobs:
         name: linux-linux-ninja
         if-no-files-found: error
         path: |
-          bundle-csBaseLibs-${{ env.VERSION }}-csCore-linux-linux-ninja.zip
-          bundle-csBaseLibs-${{ env.VERSION }}-csLie-linux-linux-ninja.zip
-          bundle-csBaseLibs-${{ env.VERSION }}-csCamera-linux-linux-ninja.zip
-          bundle-csBaseLibs-${{ env.VERSION }}-csVisOpenGL-linux-linux-ninja.zip
+          bundle-csBaseLibs-${{ env.VERSION }}-csCore-linux-linux-ninja.tar.gz
+          bundle-csBaseLibs-${{ env.VERSION }}-csLie-linux-linux-ninja.tar.gz
+          bundle-csBaseLibs-${{ env.VERSION }}-csCamera-linux-linux-ninja.tar.gz
+          bundle-csBaseLibs-${{ env.VERSION }}-csVisOpenGL-linux-linux-ninja.tar.gz
     # ---------------------------------------------------
 
   build-linux-linux-ninja-multi-config-clang:
@@ -774,192 +982,208 @@ jobs:
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-eigen3-linux-linux-ninja-multi-config-clang.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-eigen3-linux-linux-ninja-multi-config-clang.tar.gz
         out-file-path: libs/linux-ninja-multi-config-clang
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract eigen3 bundle (linux/linux-ninja-multi-config-clang)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja-multi-config-clang/*.zip -d libs/linux-ninja-multi-config-clang
-        rm -f libs/linux-ninja-multi-config-clang/*.zip
+        tar -xzf libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-eigen3-linux-linux-ninja-multi-config-clang.tar.gz -C libs/linux-ninja-multi-config-clang
+        rm -f libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-eigen3-linux-linux-ninja-multi-config-clang.tar.gz
 
 
     - name: Download fmt bundle (linux/linux-ninja-multi-config-clang)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-fmt-linux-linux-ninja-multi-config-clang.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-linux-linux-ninja-multi-config-clang.tar.gz
         out-file-path: libs/linux-ninja-multi-config-clang
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract fmt bundle (linux/linux-ninja-multi-config-clang)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja-multi-config-clang/*.zip -d libs/linux-ninja-multi-config-clang
-        rm -f libs/linux-ninja-multi-config-clang/*.zip
+        tar -xzf libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-linux-linux-ninja-multi-config-clang.tar.gz -C libs/linux-ninja-multi-config-clang
+        rm -f libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-linux-linux-ninja-multi-config-clang.tar.gz
 
 
     - name: Download fmt-eigen bundle (linux/linux-ninja-multi-config-clang)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-fmt-eigen-linux-linux-ninja-multi-config-clang.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-eigen-linux-linux-ninja-multi-config-clang.tar.gz
         out-file-path: libs/linux-ninja-multi-config-clang
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract fmt-eigen bundle (linux/linux-ninja-multi-config-clang)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja-multi-config-clang/*.zip -d libs/linux-ninja-multi-config-clang
-        rm -f libs/linux-ninja-multi-config-clang/*.zip
+        tar -xzf libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-eigen-linux-linux-ninja-multi-config-clang.tar.gz -C libs/linux-ninja-multi-config-clang
+        rm -f libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-eigen-linux-linux-ninja-multi-config-clang.tar.gz
 
 
     - name: Download cpptrace bundle (linux/linux-ninja-multi-config-clang)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-cpptrace-linux-linux-ninja-multi-config-clang.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-cpptrace-linux-linux-ninja-multi-config-clang.tar.gz
         out-file-path: libs/linux-ninja-multi-config-clang
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract cpptrace bundle (linux/linux-ninja-multi-config-clang)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja-multi-config-clang/*.zip -d libs/linux-ninja-multi-config-clang
-        rm -f libs/linux-ninja-multi-config-clang/*.zip
+        tar -xzf libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-cpptrace-linux-linux-ninja-multi-config-clang.tar.gz -C libs/linux-ninja-multi-config-clang
+        rm -f libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-cpptrace-linux-linux-ninja-multi-config-clang.tar.gz
 
 
     - name: Download magic_enum bundle (linux/linux-ninja-multi-config-clang)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-magic_enum-linux-linux-ninja-multi-config-clang.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-magic_enum-linux-linux-ninja-multi-config-clang.tar.gz
         out-file-path: libs/linux-ninja-multi-config-clang
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract magic_enum bundle (linux/linux-ninja-multi-config-clang)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja-multi-config-clang/*.zip -d libs/linux-ninja-multi-config-clang
-        rm -f libs/linux-ninja-multi-config-clang/*.zip
+        tar -xzf libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-magic_enum-linux-linux-ninja-multi-config-clang.tar.gz -C libs/linux-ninja-multi-config-clang
+        rm -f libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-magic_enum-linux-linux-ninja-multi-config-clang.tar.gz
 
 
     - name: Download libassert bundle (linux/linux-ninja-multi-config-clang)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-libassert-linux-linux-ninja-multi-config-clang.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-libassert-linux-linux-ninja-multi-config-clang.tar.gz
         out-file-path: libs/linux-ninja-multi-config-clang
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract libassert bundle (linux/linux-ninja-multi-config-clang)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja-multi-config-clang/*.zip -d libs/linux-ninja-multi-config-clang
-        rm -f libs/linux-ninja-multi-config-clang/*.zip
+        tar -xzf libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-libassert-linux-linux-ninja-multi-config-clang.tar.gz -C libs/linux-ninja-multi-config-clang
+        rm -f libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-libassert-linux-linux-ninja-multi-config-clang.tar.gz
 
 
     - name: Download tclap bundle (linux/linux-ninja-multi-config-clang)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-tclap-linux-linux-ninja-multi-config-clang.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-tclap-linux-linux-ninja-multi-config-clang.tar.gz
         out-file-path: libs/linux-ninja-multi-config-clang
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract tclap bundle (linux/linux-ninja-multi-config-clang)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja-multi-config-clang/*.zip -d libs/linux-ninja-multi-config-clang
-        rm -f libs/linux-ninja-multi-config-clang/*.zip
+        tar -xzf libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-tclap-linux-linux-ninja-multi-config-clang.tar.gz -C libs/linux-ninja-multi-config-clang
+        rm -f libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-tclap-linux-linux-ninja-multi-config-clang.tar.gz
 
 
     - name: Download Catch2 bundle (linux/linux-ninja-multi-config-clang)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-Catch2-linux-linux-ninja-multi-config-clang.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-Catch2-linux-linux-ninja-multi-config-clang.tar.gz
         out-file-path: libs/linux-ninja-multi-config-clang
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract Catch2 bundle (linux/linux-ninja-multi-config-clang)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja-multi-config-clang/*.zip -d libs/linux-ninja-multi-config-clang
-        rm -f libs/linux-ninja-multi-config-clang/*.zip
+        tar -xzf libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-Catch2-linux-linux-ninja-multi-config-clang.tar.gz -C libs/linux-ninja-multi-config-clang
+        rm -f libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-Catch2-linux-linux-ninja-multi-config-clang.tar.gz
 
 
     - name: Download pipes bundle (linux/linux-ninja-multi-config-clang)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-pipes-linux-linux-ninja-multi-config-clang.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-pipes-linux-linux-ninja-multi-config-clang.tar.gz
         out-file-path: libs/linux-ninja-multi-config-clang
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract pipes bundle (linux/linux-ninja-multi-config-clang)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja-multi-config-clang/*.zip -d libs/linux-ninja-multi-config-clang
-        rm -f libs/linux-ninja-multi-config-clang/*.zip
+        tar -xzf libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-pipes-linux-linux-ninja-multi-config-clang.tar.gz -C libs/linux-ninja-multi-config-clang
+        rm -f libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-pipes-linux-linux-ninja-multi-config-clang.tar.gz
 
 
     - name: Download NamedType bundle (linux/linux-ninja-multi-config-clang)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-NamedType-linux-linux-ninja-multi-config-clang.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-NamedType-linux-linux-ninja-multi-config-clang.tar.gz
         out-file-path: libs/linux-ninja-multi-config-clang
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract NamedType bundle (linux/linux-ninja-multi-config-clang)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja-multi-config-clang/*.zip -d libs/linux-ninja-multi-config-clang
-        rm -f libs/linux-ninja-multi-config-clang/*.zip
+        tar -xzf libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-NamedType-linux-linux-ninja-multi-config-clang.tar.gz -C libs/linux-ninja-multi-config-clang
+        rm -f libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-NamedType-linux-linux-ninja-multi-config-clang.tar.gz
 
 
     - name: Download tl-optional bundle (linux/linux-ninja-multi-config-clang)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-tl-optional-linux-linux-ninja-multi-config-clang.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-optional-linux-linux-ninja-multi-config-clang.tar.gz
         out-file-path: libs/linux-ninja-multi-config-clang
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract tl-optional bundle (linux/linux-ninja-multi-config-clang)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja-multi-config-clang/*.zip -d libs/linux-ninja-multi-config-clang
-        rm -f libs/linux-ninja-multi-config-clang/*.zip
+        tar -xzf libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-optional-linux-linux-ninja-multi-config-clang.tar.gz -C libs/linux-ninja-multi-config-clang
+        rm -f libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-optional-linux-linux-ninja-multi-config-clang.tar.gz
 
 
     - name: Download tl-expected bundle (linux/linux-ninja-multi-config-clang)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-tl-expected-linux-linux-ninja-multi-config-clang.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-expected-linux-linux-ninja-multi-config-clang.tar.gz
         out-file-path: libs/linux-ninja-multi-config-clang
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract tl-expected bundle (linux/linux-ninja-multi-config-clang)
       shell: bash
       run: |
-        unzip -o libs/linux-ninja-multi-config-clang/*.zip -d libs/linux-ninja-multi-config-clang
-        rm -f libs/linux-ninja-multi-config-clang/*.zip
+        tar -xzf libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-expected-linux-linux-ninja-multi-config-clang.tar.gz -C libs/linux-ninja-multi-config-clang
+        rm -f libs/linux-ninja-multi-config-clang/bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-expected-linux-linux-ninja-multi-config-clang.tar.gz
+
+
+    - name: Download qt6 bundle (linux/linux-ninja-multi-config-clang)
+      uses: robinraju/release-downloader@v1.10
+      with:
+        repository: cscosine/csQt6
+        tag: v6.10.2
+        fileName: bundle-csQt6-v6.10.2-qt6-linux-linux-gcc.tar.gz
+        out-file-path: libs/linux-ninja-multi-config-clang
+        token: ${{ secrets.ACTIONS_ORG_ACCESS }}
+
+    - name: Extract qt6 bundle (linux/linux-ninja-multi-config-clang)
+      shell: bash
+      run: |
+        tar -xzf libs/linux-ninja-multi-config-clang/bundle-csQt6-v6.10.2-qt6-linux-linux-gcc.tar.gz -C libs/linux-ninja-multi-config-clang
+        rm -f libs/linux-ninja-multi-config-clang/bundle-csQt6-v6.10.2-qt6-linux-linux-gcc.tar.gz
 
     # ---------------------------------------------------
 
@@ -981,20 +1205,68 @@ jobs:
     # ---------------------------------------------------
     # build section
     - name: Build linux-linux-ninja-multi-config-clang-csCore (1 / 1)
-      run: cmake --workflow linux-ninja-multi-config-clang
+      run: cmake --workflow linux-ninja-multi-config-clang &> ../csCore-linux-linux-ninja-multi-config-clang-1-build_output.log
       working-directory: csCore
 
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csCore-linux-linux-ninja-multi-config-clang-1-build_output.log
+        path: csCore-linux-linux-ninja-multi-config-clang-1-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: tail -n 200 csCore-linux-linux-ninja-multi-config-clang-1-build_output.log
+      working-directory: .
+
     - name: Build linux-linux-ninja-multi-config-clang-csLie (1 / 1)
-      run: cmake --workflow linux-ninja-multi-config-clang
+      run: cmake --workflow linux-ninja-multi-config-clang &> ../csLie-linux-linux-ninja-multi-config-clang-1-build_output.log
       working-directory: csLie
 
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csLie-linux-linux-ninja-multi-config-clang-1-build_output.log
+        path: csLie-linux-linux-ninja-multi-config-clang-1-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: tail -n 200 csLie-linux-linux-ninja-multi-config-clang-1-build_output.log
+      working-directory: .
+
     - name: Build linux-linux-ninja-multi-config-clang-csCamera (1 / 1)
-      run: cmake --workflow linux-ninja-multi-config-clang
+      run: cmake --workflow linux-ninja-multi-config-clang &> ../csCamera-linux-linux-ninja-multi-config-clang-1-build_output.log
       working-directory: csCamera
 
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csCamera-linux-linux-ninja-multi-config-clang-1-build_output.log
+        path: csCamera-linux-linux-ninja-multi-config-clang-1-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: tail -n 200 csCamera-linux-linux-ninja-multi-config-clang-1-build_output.log
+      working-directory: .
+
     - name: Build linux-linux-ninja-multi-config-clang-csVisOpenGL (1 / 1)
-      run: cmake --workflow linux-ninja-multi-config-clang
+      run: cmake --workflow linux-ninja-multi-config-clang &> ../csVisOpenGL-linux-linux-ninja-multi-config-clang-1-build_output.log
       working-directory: csVisOpenGL
+
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csVisOpenGL-linux-linux-ninja-multi-config-clang-1-build_output.log
+        path: csVisOpenGL-linux-linux-ninja-multi-config-clang-1-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: tail -n 200 csVisOpenGL-linux-linux-ninja-multi-config-clang-1-build_output.log
+      working-directory: .
 
     # ---------------------------------------------------
 
@@ -1013,19 +1285,19 @@ jobs:
 
         (
           cd install/linux-ninja-multi-config-clang/
-          zip -r "$GITHUB_WORKSPACE/bundle-csBaseLibs-${VERSION}-csCore-linux-linux-ninja-multi-config-clang.zip" csCore
+          tar -czf "$GITHUB_WORKSPACE/bundle-csBaseLibs-${VERSION}-csCore-linux-linux-ninja-multi-config-clang.tar.gz" csCore
         )
         (
           cd install/linux-ninja-multi-config-clang/
-          zip -r "$GITHUB_WORKSPACE/bundle-csBaseLibs-${VERSION}-csLie-linux-linux-ninja-multi-config-clang.zip" csLie
+          tar -czf "$GITHUB_WORKSPACE/bundle-csBaseLibs-${VERSION}-csLie-linux-linux-ninja-multi-config-clang.tar.gz" csLie
         )
         (
           cd install/linux-ninja-multi-config-clang/
-          zip -r "$GITHUB_WORKSPACE/bundle-csBaseLibs-${VERSION}-csCamera-linux-linux-ninja-multi-config-clang.zip" csCamera
+          tar -czf "$GITHUB_WORKSPACE/bundle-csBaseLibs-${VERSION}-csCamera-linux-linux-ninja-multi-config-clang.tar.gz" csCamera
         )
         (
           cd install/linux-ninja-multi-config-clang/
-          zip -r "$GITHUB_WORKSPACE/bundle-csBaseLibs-${VERSION}-csVisOpenGL-linux-linux-ninja-multi-config-clang.zip" csVisOpenGL
+          tar -czf "$GITHUB_WORKSPACE/bundle-csBaseLibs-${VERSION}-csVisOpenGL-linux-linux-ninja-multi-config-clang.tar.gz" csVisOpenGL
         )
       shell: bash
     # ---------------------------------------------------
@@ -1038,10 +1310,10 @@ jobs:
         name: linux-linux-ninja-multi-config-clang
         if-no-files-found: error
         path: |
-          bundle-csBaseLibs-${{ env.VERSION }}-csCore-linux-linux-ninja-multi-config-clang.zip
-          bundle-csBaseLibs-${{ env.VERSION }}-csLie-linux-linux-ninja-multi-config-clang.zip
-          bundle-csBaseLibs-${{ env.VERSION }}-csCamera-linux-linux-ninja-multi-config-clang.zip
-          bundle-csBaseLibs-${{ env.VERSION }}-csVisOpenGL-linux-linux-ninja-multi-config-clang.zip
+          bundle-csBaseLibs-${{ env.VERSION }}-csCore-linux-linux-ninja-multi-config-clang.tar.gz
+          bundle-csBaseLibs-${{ env.VERSION }}-csLie-linux-linux-ninja-multi-config-clang.tar.gz
+          bundle-csBaseLibs-${{ env.VERSION }}-csCamera-linux-linux-ninja-multi-config-clang.tar.gz
+          bundle-csBaseLibs-${{ env.VERSION }}-csVisOpenGL-linux-linux-ninja-multi-config-clang.tar.gz
     # ---------------------------------------------------
 
   build-windows-msvc2022-x64:
@@ -1122,192 +1394,208 @@ jobs:
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-eigen3-windows-msvc2022-x64.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-eigen3-windows-msvc2022-x64.zip
         out-file-path: libs/msvc2022-x64
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract eigen3 bundle (windows/msvc2022-x64)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64\*.zip" -DestinationPath "libs/msvc2022-x64" -Force
-        Remove-Item -Path "libs/msvc2022-x64\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-eigen3-windows-msvc2022-x64.zip" -DestinationPath "libs/msvc2022-x64" -Force
+        Remove-Item -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-eigen3-windows-msvc2022-x64.zip" -Force
 
 
     - name: Download fmt bundle (windows/msvc2022-x64)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-fmt-windows-msvc2022-x64.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-windows-msvc2022-x64.zip
         out-file-path: libs/msvc2022-x64
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract fmt bundle (windows/msvc2022-x64)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64\*.zip" -DestinationPath "libs/msvc2022-x64" -Force
-        Remove-Item -Path "libs/msvc2022-x64\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-windows-msvc2022-x64.zip" -DestinationPath "libs/msvc2022-x64" -Force
+        Remove-Item -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-windows-msvc2022-x64.zip" -Force
 
 
     - name: Download fmt-eigen bundle (windows/msvc2022-x64)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-fmt-eigen-windows-msvc2022-x64.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-eigen-windows-msvc2022-x64.zip
         out-file-path: libs/msvc2022-x64
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract fmt-eigen bundle (windows/msvc2022-x64)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64\*.zip" -DestinationPath "libs/msvc2022-x64" -Force
-        Remove-Item -Path "libs/msvc2022-x64\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-eigen-windows-msvc2022-x64.zip" -DestinationPath "libs/msvc2022-x64" -Force
+        Remove-Item -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-eigen-windows-msvc2022-x64.zip" -Force
 
 
     - name: Download cpptrace bundle (windows/msvc2022-x64)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-cpptrace-windows-msvc2022-x64.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-cpptrace-windows-msvc2022-x64.zip
         out-file-path: libs/msvc2022-x64
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract cpptrace bundle (windows/msvc2022-x64)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64\*.zip" -DestinationPath "libs/msvc2022-x64" -Force
-        Remove-Item -Path "libs/msvc2022-x64\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-cpptrace-windows-msvc2022-x64.zip" -DestinationPath "libs/msvc2022-x64" -Force
+        Remove-Item -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-cpptrace-windows-msvc2022-x64.zip" -Force
 
 
     - name: Download magic_enum bundle (windows/msvc2022-x64)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-magic_enum-windows-msvc2022-x64.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-magic_enum-windows-msvc2022-x64.zip
         out-file-path: libs/msvc2022-x64
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract magic_enum bundle (windows/msvc2022-x64)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64\*.zip" -DestinationPath "libs/msvc2022-x64" -Force
-        Remove-Item -Path "libs/msvc2022-x64\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-magic_enum-windows-msvc2022-x64.zip" -DestinationPath "libs/msvc2022-x64" -Force
+        Remove-Item -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-magic_enum-windows-msvc2022-x64.zip" -Force
 
 
     - name: Download libassert bundle (windows/msvc2022-x64)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-libassert-windows-msvc2022-x64.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-libassert-windows-msvc2022-x64.zip
         out-file-path: libs/msvc2022-x64
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract libassert bundle (windows/msvc2022-x64)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64\*.zip" -DestinationPath "libs/msvc2022-x64" -Force
-        Remove-Item -Path "libs/msvc2022-x64\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-libassert-windows-msvc2022-x64.zip" -DestinationPath "libs/msvc2022-x64" -Force
+        Remove-Item -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-libassert-windows-msvc2022-x64.zip" -Force
 
 
     - name: Download tclap bundle (windows/msvc2022-x64)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-tclap-windows-msvc2022-x64.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-tclap-windows-msvc2022-x64.zip
         out-file-path: libs/msvc2022-x64
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract tclap bundle (windows/msvc2022-x64)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64\*.zip" -DestinationPath "libs/msvc2022-x64" -Force
-        Remove-Item -Path "libs/msvc2022-x64\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-tclap-windows-msvc2022-x64.zip" -DestinationPath "libs/msvc2022-x64" -Force
+        Remove-Item -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-tclap-windows-msvc2022-x64.zip" -Force
 
 
     - name: Download Catch2 bundle (windows/msvc2022-x64)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-Catch2-windows-msvc2022-x64.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-Catch2-windows-msvc2022-x64.zip
         out-file-path: libs/msvc2022-x64
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract Catch2 bundle (windows/msvc2022-x64)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64\*.zip" -DestinationPath "libs/msvc2022-x64" -Force
-        Remove-Item -Path "libs/msvc2022-x64\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-Catch2-windows-msvc2022-x64.zip" -DestinationPath "libs/msvc2022-x64" -Force
+        Remove-Item -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-Catch2-windows-msvc2022-x64.zip" -Force
 
 
     - name: Download pipes bundle (windows/msvc2022-x64)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-pipes-windows-msvc2022-x64.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-pipes-windows-msvc2022-x64.zip
         out-file-path: libs/msvc2022-x64
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract pipes bundle (windows/msvc2022-x64)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64\*.zip" -DestinationPath "libs/msvc2022-x64" -Force
-        Remove-Item -Path "libs/msvc2022-x64\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-pipes-windows-msvc2022-x64.zip" -DestinationPath "libs/msvc2022-x64" -Force
+        Remove-Item -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-pipes-windows-msvc2022-x64.zip" -Force
 
 
     - name: Download NamedType bundle (windows/msvc2022-x64)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-NamedType-windows-msvc2022-x64.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-NamedType-windows-msvc2022-x64.zip
         out-file-path: libs/msvc2022-x64
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract NamedType bundle (windows/msvc2022-x64)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64\*.zip" -DestinationPath "libs/msvc2022-x64" -Force
-        Remove-Item -Path "libs/msvc2022-x64\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-NamedType-windows-msvc2022-x64.zip" -DestinationPath "libs/msvc2022-x64" -Force
+        Remove-Item -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-NamedType-windows-msvc2022-x64.zip" -Force
 
 
     - name: Download tl-optional bundle (windows/msvc2022-x64)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-tl-optional-windows-msvc2022-x64.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-optional-windows-msvc2022-x64.zip
         out-file-path: libs/msvc2022-x64
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract tl-optional bundle (windows/msvc2022-x64)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64\*.zip" -DestinationPath "libs/msvc2022-x64" -Force
-        Remove-Item -Path "libs/msvc2022-x64\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-optional-windows-msvc2022-x64.zip" -DestinationPath "libs/msvc2022-x64" -Force
+        Remove-Item -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-optional-windows-msvc2022-x64.zip" -Force
 
 
     - name: Download tl-expected bundle (windows/msvc2022-x64)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-tl-expected-windows-msvc2022-x64.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-expected-windows-msvc2022-x64.zip
         out-file-path: libs/msvc2022-x64
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract tl-expected bundle (windows/msvc2022-x64)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64\*.zip" -DestinationPath "libs/msvc2022-x64" -Force
-        Remove-Item -Path "libs/msvc2022-x64\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-expected-windows-msvc2022-x64.zip" -DestinationPath "libs/msvc2022-x64" -Force
+        Remove-Item -Path "libs/msvc2022-x64\bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-expected-windows-msvc2022-x64.zip" -Force
+
+
+    - name: Download qt6 bundle (windows/msvc2022-x64)
+      uses: robinraju/release-downloader@v1.10
+      with:
+        repository: cscosine/csQt6
+        tag: v6.10.2
+        fileName: bundle-csQt6-v6.10.2-qt6-windows-windows-msvc2022-x64.zip
+        out-file-path: libs/msvc2022-x64
+        token: ${{ secrets.ACTIONS_ORG_ACCESS }}
+
+    - name: Extract qt6 bundle (windows/msvc2022-x64)
+      shell: pwsh
+      run: |
+        Expand-Archive -Path "libs/msvc2022-x64\bundle-csQt6-v6.10.2-qt6-windows-windows-msvc2022-x64.zip" -DestinationPath "libs/msvc2022-x64" -Force
+        Remove-Item -Path "libs/msvc2022-x64\bundle-csQt6-v6.10.2-qt6-windows-windows-msvc2022-x64.zip" -Force
 
 
     # ---------------------------------------------------
@@ -1342,21 +1630,65 @@ jobs:
     # ---------------------------------------------------
     # build section
     - name: Build windows-msvc2022-x64-csCore (1 / 1)
-      run: cmake --workflow msvc2022-x64
+      run: cmake --workflow msvc2022-x64 *> ../csCore-windows-msvc2022-x64-1-build_output.log
       working-directory: csCore
 
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csCore-windows-msvc2022-x64-1-build_output.log
+        path: csCore-windows-msvc2022-x64-1-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: Get-Content csCore-windows-msvc2022-x64-1-build_output.log -Tail 200
+      working-directory: .
     - name: Build windows-msvc2022-x64-csLie (1 / 1)
-      run: cmake --workflow msvc2022-x64
+      run: cmake --workflow msvc2022-x64 *> ../csLie-windows-msvc2022-x64-1-build_output.log
       working-directory: csLie
 
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csLie-windows-msvc2022-x64-1-build_output.log
+        path: csLie-windows-msvc2022-x64-1-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: Get-Content csLie-windows-msvc2022-x64-1-build_output.log -Tail 200
+      working-directory: .
     - name: Build windows-msvc2022-x64-csCamera (1 / 1)
-      run: cmake --workflow msvc2022-x64
+      run: cmake --workflow msvc2022-x64 *> ../csCamera-windows-msvc2022-x64-1-build_output.log
       working-directory: csCamera
 
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csCamera-windows-msvc2022-x64-1-build_output.log
+        path: csCamera-windows-msvc2022-x64-1-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: Get-Content csCamera-windows-msvc2022-x64-1-build_output.log -Tail 200
+      working-directory: .
     - name: Build windows-msvc2022-x64-csVisOpenGL (1 / 1)
-      run: cmake --workflow msvc2022-x64
+      run: cmake --workflow msvc2022-x64 *> ../csVisOpenGL-windows-msvc2022-x64-1-build_output.log
       working-directory: csVisOpenGL
 
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csVisOpenGL-windows-msvc2022-x64-1-build_output.log
+        path: csVisOpenGL-windows-msvc2022-x64-1-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: Get-Content csVisOpenGL-windows-msvc2022-x64-1-build_output.log -Tail 200
+      working-directory: .
     # ---------------------------------------------------
 
     # ---------------------------------------------------
@@ -1541,192 +1873,208 @@ jobs:
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-eigen3-windows-msvc2022-x64-LLVM.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-eigen3-windows-msvc2022-x64-LLVM.zip
         out-file-path: libs/msvc2022-x64-LLVM
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract eigen3 bundle (windows/msvc2022-x64-LLVM)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64-LLVM\*.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
-        Remove-Item -Path "libs/msvc2022-x64-LLVM\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-eigen3-windows-msvc2022-x64-LLVM.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
+        Remove-Item -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-eigen3-windows-msvc2022-x64-LLVM.zip" -Force
 
 
     - name: Download fmt bundle (windows/msvc2022-x64-LLVM)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-fmt-windows-msvc2022-x64-LLVM.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-windows-msvc2022-x64-LLVM.zip
         out-file-path: libs/msvc2022-x64-LLVM
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract fmt bundle (windows/msvc2022-x64-LLVM)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64-LLVM\*.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
-        Remove-Item -Path "libs/msvc2022-x64-LLVM\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-windows-msvc2022-x64-LLVM.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
+        Remove-Item -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-windows-msvc2022-x64-LLVM.zip" -Force
 
 
     - name: Download fmt-eigen bundle (windows/msvc2022-x64-LLVM)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-fmt-eigen-windows-msvc2022-x64-LLVM.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-eigen-windows-msvc2022-x64-LLVM.zip
         out-file-path: libs/msvc2022-x64-LLVM
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract fmt-eigen bundle (windows/msvc2022-x64-LLVM)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64-LLVM\*.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
-        Remove-Item -Path "libs/msvc2022-x64-LLVM\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-eigen-windows-msvc2022-x64-LLVM.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
+        Remove-Item -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-fmt-eigen-windows-msvc2022-x64-LLVM.zip" -Force
 
 
     - name: Download cpptrace bundle (windows/msvc2022-x64-LLVM)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-cpptrace-windows-msvc2022-x64-LLVM.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-cpptrace-windows-msvc2022-x64-LLVM.zip
         out-file-path: libs/msvc2022-x64-LLVM
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract cpptrace bundle (windows/msvc2022-x64-LLVM)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64-LLVM\*.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
-        Remove-Item -Path "libs/msvc2022-x64-LLVM\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-cpptrace-windows-msvc2022-x64-LLVM.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
+        Remove-Item -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-cpptrace-windows-msvc2022-x64-LLVM.zip" -Force
 
 
     - name: Download magic_enum bundle (windows/msvc2022-x64-LLVM)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-magic_enum-windows-msvc2022-x64-LLVM.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-magic_enum-windows-msvc2022-x64-LLVM.zip
         out-file-path: libs/msvc2022-x64-LLVM
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract magic_enum bundle (windows/msvc2022-x64-LLVM)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64-LLVM\*.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
-        Remove-Item -Path "libs/msvc2022-x64-LLVM\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-magic_enum-windows-msvc2022-x64-LLVM.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
+        Remove-Item -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-magic_enum-windows-msvc2022-x64-LLVM.zip" -Force
 
 
     - name: Download libassert bundle (windows/msvc2022-x64-LLVM)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-libassert-windows-msvc2022-x64-LLVM.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-libassert-windows-msvc2022-x64-LLVM.zip
         out-file-path: libs/msvc2022-x64-LLVM
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract libassert bundle (windows/msvc2022-x64-LLVM)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64-LLVM\*.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
-        Remove-Item -Path "libs/msvc2022-x64-LLVM\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-libassert-windows-msvc2022-x64-LLVM.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
+        Remove-Item -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-libassert-windows-msvc2022-x64-LLVM.zip" -Force
 
 
     - name: Download tclap bundle (windows/msvc2022-x64-LLVM)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-tclap-windows-msvc2022-x64-LLVM.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-tclap-windows-msvc2022-x64-LLVM.zip
         out-file-path: libs/msvc2022-x64-LLVM
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract tclap bundle (windows/msvc2022-x64-LLVM)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64-LLVM\*.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
-        Remove-Item -Path "libs/msvc2022-x64-LLVM\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-tclap-windows-msvc2022-x64-LLVM.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
+        Remove-Item -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-tclap-windows-msvc2022-x64-LLVM.zip" -Force
 
 
     - name: Download Catch2 bundle (windows/msvc2022-x64-LLVM)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-Catch2-windows-msvc2022-x64-LLVM.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-Catch2-windows-msvc2022-x64-LLVM.zip
         out-file-path: libs/msvc2022-x64-LLVM
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract Catch2 bundle (windows/msvc2022-x64-LLVM)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64-LLVM\*.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
-        Remove-Item -Path "libs/msvc2022-x64-LLVM\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-Catch2-windows-msvc2022-x64-LLVM.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
+        Remove-Item -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-Catch2-windows-msvc2022-x64-LLVM.zip" -Force
 
 
     - name: Download pipes bundle (windows/msvc2022-x64-LLVM)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-pipes-windows-msvc2022-x64-LLVM.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-pipes-windows-msvc2022-x64-LLVM.zip
         out-file-path: libs/msvc2022-x64-LLVM
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract pipes bundle (windows/msvc2022-x64-LLVM)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64-LLVM\*.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
-        Remove-Item -Path "libs/msvc2022-x64-LLVM\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-pipes-windows-msvc2022-x64-LLVM.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
+        Remove-Item -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-pipes-windows-msvc2022-x64-LLVM.zip" -Force
 
 
     - name: Download NamedType bundle (windows/msvc2022-x64-LLVM)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-NamedType-windows-msvc2022-x64-LLVM.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-NamedType-windows-msvc2022-x64-LLVM.zip
         out-file-path: libs/msvc2022-x64-LLVM
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract NamedType bundle (windows/msvc2022-x64-LLVM)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64-LLVM\*.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
-        Remove-Item -Path "libs/msvc2022-x64-LLVM\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-NamedType-windows-msvc2022-x64-LLVM.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
+        Remove-Item -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-NamedType-windows-msvc2022-x64-LLVM.zip" -Force
 
 
     - name: Download tl-optional bundle (windows/msvc2022-x64-LLVM)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-tl-optional-windows-msvc2022-x64-LLVM.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-optional-windows-msvc2022-x64-LLVM.zip
         out-file-path: libs/msvc2022-x64-LLVM
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract tl-optional bundle (windows/msvc2022-x64-LLVM)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64-LLVM\*.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
-        Remove-Item -Path "libs/msvc2022-x64-LLVM\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-optional-windows-msvc2022-x64-LLVM.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
+        Remove-Item -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-optional-windows-msvc2022-x64-LLVM.zip" -Force
 
 
     - name: Download tl-expected bundle (windows/msvc2022-x64-LLVM)
       uses: robinraju/release-downloader@v1.10
       with:
         repository: cscosine/3rdPartyBaseLibs
-        tag: v0.1.0-rc1
-        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc1-tl-expected-windows-msvc2022-x64-LLVM.zip
+        tag: v0.1.0-rc2
+        fileName: bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-expected-windows-msvc2022-x64-LLVM.zip
         out-file-path: libs/msvc2022-x64-LLVM
         token: ${{ secrets.ACTIONS_ORG_ACCESS }}
 
     - name: Extract tl-expected bundle (windows/msvc2022-x64-LLVM)
       shell: pwsh
       run: |
-        Expand-Archive -Path "libs/msvc2022-x64-LLVM\*.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
-        Remove-Item -Path "libs/msvc2022-x64-LLVM\*.zip" -Force
+        Expand-Archive -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-expected-windows-msvc2022-x64-LLVM.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
+        Remove-Item -Path "libs/msvc2022-x64-LLVM\bundle-3rdPartyBaseLibs-v0.1.0-rc2-tl-expected-windows-msvc2022-x64-LLVM.zip" -Force
+
+
+    - name: Download qt6 bundle (windows/msvc2022-x64-LLVM)
+      uses: robinraju/release-downloader@v1.10
+      with:
+        repository: cscosine/csQt6
+        tag: v6.10.2
+        fileName: bundle-csQt6-v6.10.2-qt6-windows-windows-msvc2022-x64.zip
+        out-file-path: libs/msvc2022-x64-LLVM
+        token: ${{ secrets.ACTIONS_ORG_ACCESS }}
+
+    - name: Extract qt6 bundle (windows/msvc2022-x64-LLVM)
+      shell: pwsh
+      run: |
+        Expand-Archive -Path "libs/msvc2022-x64-LLVM\bundle-csQt6-v6.10.2-qt6-windows-windows-msvc2022-x64.zip" -DestinationPath "libs/msvc2022-x64-LLVM" -Force
+        Remove-Item -Path "libs/msvc2022-x64-LLVM\bundle-csQt6-v6.10.2-qt6-windows-windows-msvc2022-x64.zip" -Force
 
     # ---------------------------------------------------
 
@@ -1760,21 +2108,65 @@ jobs:
     # ---------------------------------------------------
     # build section
     - name: Build windows-msvc2022-x64-LLVM-csCore (1 / 1)
-      run: cmake --workflow msvc2022-x64-LLVM
+      run: cmake --workflow msvc2022-x64-LLVM *> ../csCore-windows-msvc2022-x64-LLVM-1-build_output.log
       working-directory: csCore
 
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csCore-windows-msvc2022-x64-LLVM-1-build_output.log
+        path: csCore-windows-msvc2022-x64-LLVM-1-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: Get-Content csCore-windows-msvc2022-x64-LLVM-1-build_output.log -Tail 200
+      working-directory: .
     - name: Build windows-msvc2022-x64-LLVM-csLie (1 / 1)
-      run: cmake --workflow msvc2022-x64-LLVM
+      run: cmake --workflow msvc2022-x64-LLVM *> ../csLie-windows-msvc2022-x64-LLVM-1-build_output.log
       working-directory: csLie
 
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csLie-windows-msvc2022-x64-LLVM-1-build_output.log
+        path: csLie-windows-msvc2022-x64-LLVM-1-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: Get-Content csLie-windows-msvc2022-x64-LLVM-1-build_output.log -Tail 200
+      working-directory: .
     - name: Build windows-msvc2022-x64-LLVM-csCamera (1 / 1)
-      run: cmake --workflow msvc2022-x64-LLVM
+      run: cmake --workflow msvc2022-x64-LLVM *> ../csCamera-windows-msvc2022-x64-LLVM-1-build_output.log
       working-directory: csCamera
 
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csCamera-windows-msvc2022-x64-LLVM-1-build_output.log
+        path: csCamera-windows-msvc2022-x64-LLVM-1-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: Get-Content csCamera-windows-msvc2022-x64-LLVM-1-build_output.log -Tail 200
+      working-directory: .
     - name: Build windows-msvc2022-x64-LLVM-csVisOpenGL (1 / 1)
-      run: cmake --workflow msvc2022-x64-LLVM
+      run: cmake --workflow msvc2022-x64-LLVM *> ../csVisOpenGL-windows-msvc2022-x64-LLVM-1-build_output.log
       working-directory: csVisOpenGL
 
+    - name: Upload build log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: csVisOpenGL-windows-msvc2022-x64-LLVM-1-build_output.log
+        path: csVisOpenGL-windows-msvc2022-x64-LLVM-1-build_output.log
+
+    - name: Show last lines on failure
+      if: failure()
+      run: Get-Content csVisOpenGL-windows-msvc2022-x64-LLVM-1-build_output.log -Tail 200
+      working-directory: .
     # ---------------------------------------------------
 
     # ---------------------------------------------------
@@ -1920,8 +2312,8 @@ jobs:
           name: Release ${{ github.ref_name }}
           fail_on_unmatched_files: true
           files: |
-            linux-linux-ninja/*.zip
-            linux-linux-ninja-multi-config-clang/*.zip
+            linux-linux-ninja/*.tar.gz
+            linux-linux-ninja-multi-config-clang/*.tar.gz
             windows-msvc2022-x64/*.zip
             windows-msvc2022-x64-LLVM/*.zip
         env:
