@@ -86,11 +86,6 @@ def create_orchestrator() -> OptionalOrchestratorWithReport:
         name="csBaseLibs", version="0.1.0", execution_matrix_name="orchestrator-matrix"
     )
 
-    report.append_warning("SKIPPING FIRST MATRIX ENTRY, FIX ME")
-    o.execution_matrix.os_architecture_compiler_generator_list = (
-        o.execution_matrix.os_architecture_compiler_generator_list[1:]
-    )
-
     o.wf_config = WorkflowConfig(
         on_push_branches=["main", "dev"],
         on_push_tags=["'v*.*.*'"],
