@@ -141,19 +141,6 @@ def create_orchestrator() -> OptionalOrchestratorWithReport:
             StepExecuteOnlyOn(os=OS.LINUX, version_starts_with=UBUNTU_STRING_PREFIX)
         )
     )
-    # ----------------------------------------------------------------
-    p = o.create_phase("Enable long paths (Windows)")
-    p.add_step(
-        StepWinEnableLongPaths(
-            name="enable long paths",
-            description="enable long paths",
-        )
-        .add_extra(StepExecuteOnlyOncePerMatrix())
-        .add_extra(StepSkipExecutionOnLocal())
-        .add_extra(
-            StepExecuteOnlyOn(os=OS.WINDOWS)
-        )
-    )
 
     # ----------------------------------------------------------------
     p = o.create_phase("Get Precompiled Libraries")
