@@ -37,7 +37,7 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           files: |
-            artifacts/**/*
+            artifacts/**/*    
 
   orchestrator-matrix:
     runs-on: ${{ matrix.runner }}
@@ -248,36 +248,50 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail # enable strict mode
-
-
+          
+          
           packages=(
             libgl1-mesa-dev
             libopengl-dev
             mesa-common-dev
           )
-
+          
           missing=()
-
+          
           for pkg in "${packages[@]}"; do
             dpkg -s "$pkg" &>/dev/null || missing+=("$pkg")
           done
-
+          
           if [ ${#missing[@]} -ne 0 ]; then
-
+          
             sudo apt update
-
+          
             echo "Need to install missing packages: ${missing[*]}"
             sudo apt install -y "${missing[@]}"
           else
             echo "All packages already installed."
           fi
 
+      - name: Run command enable long paths
+        if: ${{ matrix.os == 'windows' }}
+        shell: powershell
+        run: |
+          Set-ItemProperty `
+           -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" `
+           -Name LongPathsEnabled `
+           -Value 1
+          
+          $v = [int](Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem").LongPathsEnabled
+          if ($v -ne 1) {
+              throw "LongPathsEnabled is NOT enabled (value = $v)"
+          }
+
       - name: Get Precompiled Lib eigen3 from 3rdPartyBaseLibs prepare filename
         id: filename_3rdPartyBaseLibs_eigen3
         shell: python
         run: |
           import os
-
+          
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_eigen3=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-eigen3-3.4.0.tar.gz\n")
 
@@ -300,7 +314,7 @@ jobs:
         shell: python
         run: |
           import os
-
+          
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_fmt=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-fmt-11.2.1.tar.gz\n")
 
@@ -323,7 +337,7 @@ jobs:
         shell: python
         run: |
           import os
-
+          
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_fmt_eigen=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-fmt-eigen-1.0.0.tar.gz\n")
 
@@ -346,7 +360,7 @@ jobs:
         shell: python
         run: |
           import os
-
+          
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_cpptrace=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-cpptrace-0.8.3.tar.gz\n")
 
@@ -369,7 +383,7 @@ jobs:
         shell: python
         run: |
           import os
-
+          
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_magic_enum=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-magic_enum-0.9.7.tar.gz\n")
 
@@ -392,7 +406,7 @@ jobs:
         shell: python
         run: |
           import os
-
+          
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_libassert=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-libassert-2.1.5.tar.gz\n")
 
@@ -415,7 +429,7 @@ jobs:
         shell: python
         run: |
           import os
-
+          
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_tclap=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-tclap-1.0.0.tar.gz\n")
 
@@ -438,7 +452,7 @@ jobs:
         shell: python
         run: |
           import os
-
+          
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_Catch2=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-Catch2-3.10.0.tar.gz\n")
 
@@ -461,7 +475,7 @@ jobs:
         shell: python
         run: |
           import os
-
+          
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_pipes=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-pipes-0.0.1.tar.gz\n")
 
@@ -484,7 +498,7 @@ jobs:
         shell: python
         run: |
           import os
-
+          
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_NamedType=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-NamedType-1.1.0.tar.gz\n")
 
@@ -507,7 +521,7 @@ jobs:
         shell: python
         run: |
           import os
-
+          
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_tl_expected=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-tl-expected-1.2.0.tar.gz\n")
 
@@ -530,7 +544,7 @@ jobs:
         shell: python
         run: |
           import os
-
+          
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_tl_optional=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-tl-optional-1.0.0.tar.gz\n")
 
@@ -554,9 +568,9 @@ jobs:
         run: |
           import os
           import sys
-
+          
           execution_id = int("${{ matrix.execution_id }}")
-
+          
           filenames = {
               0: "csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninja",
               1: "csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninja",
@@ -571,13 +585,13 @@ jobs:
               10: "csv1-windows-v10-x64-generic-msvc-msvc_2022_17-ninja",
               11: "csv1-windows-v10-x64-generic-msvc-msvc_2022_17-ninja",
           }
-
+          
           if execution_id not in filenames:
               print("Unsupported matrix entry")
               sys.exit(1)
-
+          
           filename = filenames[execution_id] + '-qt6-v6.11.1.tar.gz'
-
+          
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
               f.write(f"filename_csQt6_qt6={filename}\n")
 
@@ -672,57 +686,57 @@ jobs:
           import json
           import sys
           import os
-
+          
           def grep_package_version(filename: Path) -> tuple[str | None, str | None]:
               path = Path(filename)
-
+          
               if not path.is_file():
                   return (None, f"ERROR: file not found: {path}")
-
+          
               content = path.read_text(encoding="utf-8")
-
+          
               matches = []
-
+          
               for m in re.finditer(
                   r'set\s*\(\s*PACKAGE_VERSION\s+("([^"]*)"|([^\s\)]+))\s*\)',
                   content,
               ):
                   value = m.group(2) or m.group(3)
-
+          
                   # Ignore computed values like "${PACKAGE_VERSION} (...)"
                   if "${" in value:
                       continue
-
+          
                   matches.append(value)
-
+          
               if len(matches) != 1:
                   return (None, f"ERROR: {path}: expected exactly one PACKAGE_VERSION definition, found {len(matches)}")
-
+          
               version = matches[0]
               return (version, None)
-
+          
           def find_cmake_config_version(search_path: Path, name: str) -> tuple[Path | None, str | None]:
               candidates = {
                   f"{name}-config-version.cmake".lower(),
                   f"{name}ConfigVersion.cmake".lower(),
               }
-
+          
               matches = [p for p in search_path.rglob("*") if p.is_file() and p.name.lower() in candidates]
-
+          
               if not matches:
                   return (None, f"No config version file found for '{name}' under '{search_path}'")
-
+          
               if len(matches) > 1:
                   return (None, "Multiple config version files found:" + ", ".join(str(p) for p in matches))
-
+          
               return (matches[0], None)
-
+          
           files = {
           }
-
+          
           result = []
-
-
+          
+          
           for name, filename in files.items():
             v_or_err = grep_package_version(filename=filename)
             if v_or_err[0] is not None:
@@ -732,14 +746,14 @@ jobs:
                 sys.exit(f'ERROR: processing {name} at {filename}: {v_or_err[1]}')
             else:
                 sys.exit('ERROR: unexpected behavior of grep_package_version processing {name} at {filename}')
-
+          
           repos_auto_search_list = [
               "csCore",
               "csLie",
               "csCamera",
               "csVisOpenGL",
           ]
-
+          
           for name in repos_auto_search_list:
             search_path: Path = Path('workspace/install/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}') / name
             path_or_err = find_cmake_config_version(search_path=search_path, name=name)
@@ -757,12 +771,12 @@ jobs:
                 sys.exit(f'ERROR: processing {name} : {path_or_err[1]}')
             else:
                 sys.exit('ERROR: unexpected behavior of find_cmake_config_version processing {name}')
-
-
+          
+          
           output_file = os.environ["GITHUB_OUTPUT"]
           with open(output_file, "w", encoding="utf-8") as f:
               f.write(f"packages={json.dumps(result)}\n")
-
+          
 
       - name: Create Archives
         env:
@@ -773,16 +787,16 @@ jobs:
           import os
           import tarfile
           from pathlib import Path
-
+          
           versions = json.loads(os.environ['VERSIONS'])
-
+          
           for entry in versions:
               name = entry['name']
               version = entry['version']
               install_subdir = Path('workspace/install/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}').resolve()
               input_path = Path(install_subdir / Path(name)).resolve()
               output_path = Path(install_subdir / Path('csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}' + '-' + name + '-' + version + '.tar.gz')).resolve()
-
+              
               with tarfile.open(output_path, 'w:gz') as tar:
                   for path in input_path.rglob('*'):
                       resolved_path = path.resolve()

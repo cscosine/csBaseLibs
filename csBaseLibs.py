@@ -48,7 +48,7 @@ from csorchestrator.frontend.step.step_upload_artifacts import (
     StepUploadArtifacts,
     create_artifact_prefix_from_orchestrator_name_version,
 )
-from csorchestrator.frontend.step.step_custom_command import StepInstallAptPackages
+from csorchestrator.frontend.step.step_custom_command import StepInstallAptPackages, StepWinPSCommand
 from csorchestrator.frontend.step.step_get_precompiled_lib_github import (
     StepGetPrecompiledLibGithub,
 )
@@ -138,6 +138,31 @@ def create_orchestrator() -> OptionalOrchestratorWithReport:
         .add_extra(StepExecuteOnlyOncePerMatrix())
         .add_extra(
             StepExecuteOnlyOn(os=OS.LINUX, version_starts_with=UBUNTU_STRING_PREFIX)
+        )
+    )
+    # ----------------------------------------------------------------
+    p = o.create_phase("Enable long paths (Windows)")
+    p.add_step(
+        StepWinPSCommand(
+            name="enable long paths",
+            description="enable long paths",
+            cmd = [
+                "Set-ItemProperty `",
+                ' -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\FileSystem" `',
+                " -Name LongPathsEnabled `",
+                " -Value 1",
+                "",
+                '$v = [int](Get-ItemProperty "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\FileSystem").LongPathsEnabled',
+                'if ($v -ne 1) {',
+                '    throw "LongPathsEnabled is NOT enabled (value = $v)"',
+                '}',
+            ],
+            dry_run=False,
+        )
+        .add_extra(StepExecuteOnlyOncePerMatrix())
+        .add_extra(StepSkipExecutionOnLocal())
+        .add_extra(
+            StepExecuteOnlyOn(os=OS.WINDOWS)
         )
     )
 
