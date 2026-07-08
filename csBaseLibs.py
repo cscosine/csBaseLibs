@@ -168,7 +168,7 @@ def create_orchestrator() -> OptionalOrchestratorWithReport:
                 base_url=StepGetPrecompiledLibGithub.GITHUB_BASE_URL_HTTPS,
                 org="cscosine",
                 project_name="3rdPartyBaseLibs",
-                project_tag="v0.1.0-test",
+                project_tag="v0.1.0",
                 lib_name=lib_name,
                 lib_version=lib_version,
                 base_libs_dir=base_libs_dir,

@@ -37,7 +37,7 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           files: |
-            artifacts/**/*    
+            artifacts/**/*
 
   orchestrator-matrix:
     runs-on: ${{ matrix.runner }}
@@ -55,18 +55,18 @@ jobs:
             c_compiler: gcc
             cpp_compiler: g++
             compiler_version: default
-            generator: ninja
-            generator_type: singleconfig
-            generator_cmake: Ninja
+            generator: ninjamulticonfig
+            generator_type: multiconfig
+            generator_cmake: Ninja Multi-Config
             runner: ubuntu-22.04
           - execution_id: 1
             os: linux
             os_version: ubuntu22.04
             architecture: x64
             architecture_variant: generic
-            compiler: gcc
-            c_compiler: gcc
-            cpp_compiler: g++
+            compiler: clang
+            c_compiler: clang
+            cpp_compiler: clang++
             compiler_version: default
             generator: ninjamulticonfig
             generator_type: multiconfig
@@ -75,7 +75,20 @@ jobs:
           - execution_id: 2
             os: linux
             os_version: ubuntu22.04
-            architecture: x64
+            architecture: arm64
+            architecture_variant: generic
+            compiler: gcc
+            c_compiler: gcc
+            cpp_compiler: g++
+            compiler_version: default
+            generator: ninja
+            generator_type: singleconfig
+            generator_cmake: Ninja
+            runner: ubuntu-22.04-arm
+          - execution_id: 3
+            os: linux
+            os_version: ubuntu22.04
+            architecture: arm64
             architecture_variant: generic
             compiler: clang
             c_compiler: clang
@@ -84,20 +97,7 @@ jobs:
             generator: ninja
             generator_type: singleconfig
             generator_cmake: Ninja
-            runner: ubuntu-22.04
-          - execution_id: 3
-            os: linux
-            os_version: ubuntu22.04
-            architecture: x64
-            architecture_variant: generic
-            compiler: clang
-            c_compiler: clang
-            cpp_compiler: clang++
-            compiler_version: default
-            generator: ninjamulticonfig
-            generator_type: multiconfig
-            generator_cmake: Ninja Multi-Config
-            runner: ubuntu-22.04
+            runner: ubuntu-22.04-arm
           - execution_id: 4
             os: linux
             os_version: ubuntu24.04
@@ -107,18 +107,18 @@ jobs:
             c_compiler: gcc
             cpp_compiler: g++
             compiler_version: default
-            generator: ninja
-            generator_type: singleconfig
-            generator_cmake: Ninja
+            generator: ninjamulticonfig
+            generator_type: multiconfig
+            generator_cmake: Ninja Multi-Config
             runner: ubuntu-24.04
           - execution_id: 5
             os: linux
             os_version: ubuntu24.04
             architecture: x64
             architecture_variant: generic
-            compiler: gcc
-            c_compiler: gcc
-            cpp_compiler: g++
+            compiler: clang
+            c_compiler: clang
+            cpp_compiler: clang++
             compiler_version: default
             generator: ninjamulticonfig
             generator_type: multiconfig
@@ -127,7 +127,20 @@ jobs:
           - execution_id: 6
             os: linux
             os_version: ubuntu24.04
-            architecture: x64
+            architecture: arm64
+            architecture_variant: generic
+            compiler: gcc
+            c_compiler: gcc
+            cpp_compiler: g++
+            compiler_version: default
+            generator: ninja
+            generator_type: singleconfig
+            generator_cmake: Ninja
+            runner: ubuntu-24.04-arm
+          - execution_id: 7
+            os: linux
+            os_version: ubuntu24.04
+            architecture: arm64
             architecture_variant: generic
             compiler: clang
             c_compiler: clang
@@ -136,20 +149,7 @@ jobs:
             generator: ninja
             generator_type: singleconfig
             generator_cmake: Ninja
-            runner: ubuntu-24.04
-          - execution_id: 7
-            os: linux
-            os_version: ubuntu24.04
-            architecture: x64
-            architecture_variant: generic
-            compiler: clang
-            c_compiler: clang
-            cpp_compiler: clang++
-            compiler_version: default
-            generator: ninjamulticonfig
-            generator_type: multiconfig
-            generator_cmake: Ninja Multi-Config
-            runner: ubuntu-24.04
+            runner: ubuntu-24.04-arm
           - execution_id: 8
             os: windows
             os_version: v10
@@ -248,24 +248,24 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail # enable strict mode
-          
-          
+
+
           packages=(
             libgl1-mesa-dev
             libopengl-dev
             mesa-common-dev
           )
-          
+
           missing=()
-          
+
           for pkg in "${packages[@]}"; do
             dpkg -s "$pkg" &>/dev/null || missing+=("$pkg")
           done
-          
+
           if [ ${#missing[@]} -ne 0 ]; then
-          
+
             sudo apt update
-          
+
             echo "Need to install missing packages: ${missing[*]}"
             sudo apt install -y "${missing[@]}"
           else
@@ -277,7 +277,7 @@ jobs:
         shell: python
         run: |
           import os
-          
+
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_eigen3=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-eigen3-3.4.0.tar.gz\n")
 
@@ -285,7 +285,7 @@ jobs:
         uses: robinraju/release-downloader@v1.13
         with:
           repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.0-test
+          tag: v0.1.0
           fileName: ${{ steps.filename_3rdPartyBaseLibs_eigen3.outputs.filename_3rdPartyBaseLibs_eigen3 }}
           out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
 
@@ -300,7 +300,7 @@ jobs:
         shell: python
         run: |
           import os
-          
+
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_fmt=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-fmt-11.2.1.tar.gz\n")
 
@@ -308,7 +308,7 @@ jobs:
         uses: robinraju/release-downloader@v1.13
         with:
           repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.0-test
+          tag: v0.1.0
           fileName: ${{ steps.filename_3rdPartyBaseLibs_fmt.outputs.filename_3rdPartyBaseLibs_fmt }}
           out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
 
@@ -323,7 +323,7 @@ jobs:
         shell: python
         run: |
           import os
-          
+
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_fmt_eigen=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-fmt-eigen-1.0.0.tar.gz\n")
 
@@ -331,7 +331,7 @@ jobs:
         uses: robinraju/release-downloader@v1.13
         with:
           repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.0-test
+          tag: v0.1.0
           fileName: ${{ steps.filename_3rdPartyBaseLibs_fmt_eigen.outputs.filename_3rdPartyBaseLibs_fmt_eigen }}
           out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
 
@@ -346,7 +346,7 @@ jobs:
         shell: python
         run: |
           import os
-          
+
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_cpptrace=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-cpptrace-0.8.3.tar.gz\n")
 
@@ -354,7 +354,7 @@ jobs:
         uses: robinraju/release-downloader@v1.13
         with:
           repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.0-test
+          tag: v0.1.0
           fileName: ${{ steps.filename_3rdPartyBaseLibs_cpptrace.outputs.filename_3rdPartyBaseLibs_cpptrace }}
           out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
 
@@ -369,7 +369,7 @@ jobs:
         shell: python
         run: |
           import os
-          
+
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_magic_enum=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-magic_enum-0.9.7.tar.gz\n")
 
@@ -377,7 +377,7 @@ jobs:
         uses: robinraju/release-downloader@v1.13
         with:
           repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.0-test
+          tag: v0.1.0
           fileName: ${{ steps.filename_3rdPartyBaseLibs_magic_enum.outputs.filename_3rdPartyBaseLibs_magic_enum }}
           out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
 
@@ -392,7 +392,7 @@ jobs:
         shell: python
         run: |
           import os
-          
+
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_libassert=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-libassert-2.1.5.tar.gz\n")
 
@@ -400,7 +400,7 @@ jobs:
         uses: robinraju/release-downloader@v1.13
         with:
           repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.0-test
+          tag: v0.1.0
           fileName: ${{ steps.filename_3rdPartyBaseLibs_libassert.outputs.filename_3rdPartyBaseLibs_libassert }}
           out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
 
@@ -415,7 +415,7 @@ jobs:
         shell: python
         run: |
           import os
-          
+
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_tclap=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-tclap-1.0.0.tar.gz\n")
 
@@ -423,7 +423,7 @@ jobs:
         uses: robinraju/release-downloader@v1.13
         with:
           repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.0-test
+          tag: v0.1.0
           fileName: ${{ steps.filename_3rdPartyBaseLibs_tclap.outputs.filename_3rdPartyBaseLibs_tclap }}
           out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
 
@@ -438,7 +438,7 @@ jobs:
         shell: python
         run: |
           import os
-          
+
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_Catch2=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-Catch2-3.10.0.tar.gz\n")
 
@@ -446,7 +446,7 @@ jobs:
         uses: robinraju/release-downloader@v1.13
         with:
           repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.0-test
+          tag: v0.1.0
           fileName: ${{ steps.filename_3rdPartyBaseLibs_Catch2.outputs.filename_3rdPartyBaseLibs_Catch2 }}
           out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
 
@@ -461,7 +461,7 @@ jobs:
         shell: python
         run: |
           import os
-          
+
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_pipes=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-pipes-0.0.1.tar.gz\n")
 
@@ -469,7 +469,7 @@ jobs:
         uses: robinraju/release-downloader@v1.13
         with:
           repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.0-test
+          tag: v0.1.0
           fileName: ${{ steps.filename_3rdPartyBaseLibs_pipes.outputs.filename_3rdPartyBaseLibs_pipes }}
           out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
 
@@ -484,7 +484,7 @@ jobs:
         shell: python
         run: |
           import os
-          
+
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_NamedType=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-NamedType-1.1.0.tar.gz\n")
 
@@ -492,7 +492,7 @@ jobs:
         uses: robinraju/release-downloader@v1.13
         with:
           repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.0-test
+          tag: v0.1.0
           fileName: ${{ steps.filename_3rdPartyBaseLibs_NamedType.outputs.filename_3rdPartyBaseLibs_NamedType }}
           out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
 
@@ -507,7 +507,7 @@ jobs:
         shell: python
         run: |
           import os
-          
+
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_tl_expected=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-tl-expected-1.2.0.tar.gz\n")
 
@@ -515,7 +515,7 @@ jobs:
         uses: robinraju/release-downloader@v1.13
         with:
           repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.0-test
+          tag: v0.1.0
           fileName: ${{ steps.filename_3rdPartyBaseLibs_tl_expected.outputs.filename_3rdPartyBaseLibs_tl_expected }}
           out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
 
@@ -530,7 +530,7 @@ jobs:
         shell: python
         run: |
           import os
-          
+
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write(f"filename_3rdPartyBaseLibs_tl_optional=csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-tl-optional-1.0.0.tar.gz\n")
 
@@ -538,7 +538,7 @@ jobs:
         uses: robinraju/release-downloader@v1.13
         with:
           repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.0-test
+          tag: v0.1.0
           fileName: ${{ steps.filename_3rdPartyBaseLibs_tl_optional.outputs.filename_3rdPartyBaseLibs_tl_optional }}
           out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
 
@@ -554,30 +554,30 @@ jobs:
         run: |
           import os
           import sys
-          
+
           execution_id = int("${{ matrix.execution_id }}")
-          
+
           filenames = {
               0: "csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninja",
               1: "csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninja",
-              2: "csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninja",
-              3: "csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninja",
+              2: "csv1-linux-ubuntu22.04-arm64-generic-gcc-default-ninja",
+              3: "csv1-linux-ubuntu22.04-arm64-generic-gcc-default-ninja",
               4: "csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninja",
               5: "csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninja",
-              6: "csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninja",
-              7: "csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninja",
+              6: "csv1-linux-ubuntu24.04-arm64-generic-gcc-default-ninja",
+              7: "csv1-linux-ubuntu24.04-arm64-generic-gcc-default-ninja",
               8: "csv1-windows-v10-x64-generic-msvc-msvc_2022_17-ninja",
               9: "csv1-windows-v10-x64-generic-msvc-msvc_2022_17-ninja",
               10: "csv1-windows-v10-x64-generic-msvc-msvc_2022_17-ninja",
               11: "csv1-windows-v10-x64-generic-msvc-msvc_2022_17-ninja",
           }
-          
+
           if execution_id not in filenames:
               print("Unsupported matrix entry")
               sys.exit(1)
-          
+
           filename = filenames[execution_id] + '-qt6-v6.11.1.tar.gz'
-          
+
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
               f.write(f"filename_csQt6_qt6={filename}\n")
 
@@ -672,57 +672,57 @@ jobs:
           import json
           import sys
           import os
-          
+
           def grep_package_version(filename: Path) -> tuple[str | None, str | None]:
               path = Path(filename)
-          
+
               if not path.is_file():
                   return (None, f"ERROR: file not found: {path}")
-          
+
               content = path.read_text(encoding="utf-8")
-          
+
               matches = []
-          
+
               for m in re.finditer(
                   r'set\s*\(\s*PACKAGE_VERSION\s+("([^"]*)"|([^\s\)]+))\s*\)',
                   content,
               ):
                   value = m.group(2) or m.group(3)
-          
+
                   # Ignore computed values like "${PACKAGE_VERSION} (...)"
                   if "${" in value:
                       continue
-          
+
                   matches.append(value)
-          
+
               if len(matches) != 1:
                   return (None, f"ERROR: {path}: expected exactly one PACKAGE_VERSION definition, found {len(matches)}")
-          
+
               version = matches[0]
               return (version, None)
-          
+
           def find_cmake_config_version(search_path: Path, name: str) -> tuple[Path | None, str | None]:
               candidates = {
                   f"{name}-config-version.cmake".lower(),
                   f"{name}ConfigVersion.cmake".lower(),
               }
-          
+
               matches = [p for p in search_path.rglob("*") if p.is_file() and p.name.lower() in candidates]
-          
+
               if not matches:
                   return (None, f"No config version file found for '{name}' under '{search_path}'")
-          
+
               if len(matches) > 1:
                   return (None, "Multiple config version files found:" + ", ".join(str(p) for p in matches))
-          
+
               return (matches[0], None)
-          
+
           files = {
           }
-          
+
           result = []
-          
-          
+
+
           for name, filename in files.items():
             v_or_err = grep_package_version(filename=filename)
             if v_or_err[0] is not None:
@@ -732,14 +732,14 @@ jobs:
                 sys.exit(f'ERROR: processing {name} at {filename}: {v_or_err[1]}')
             else:
                 sys.exit('ERROR: unexpected behavior of grep_package_version processing {name} at {filename}')
-          
+
           repos_auto_search_list = [
               "csCore",
               "csLie",
               "csCamera",
               "csVisOpenGL",
           ]
-          
+
           for name in repos_auto_search_list:
             search_path: Path = Path('workspace/install/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}') / name
             path_or_err = find_cmake_config_version(search_path=search_path, name=name)
@@ -757,12 +757,12 @@ jobs:
                 sys.exit(f'ERROR: processing {name} : {path_or_err[1]}')
             else:
                 sys.exit('ERROR: unexpected behavior of find_cmake_config_version processing {name}')
-          
-          
+
+
           output_file = os.environ["GITHUB_OUTPUT"]
           with open(output_file, "w", encoding="utf-8") as f:
               f.write(f"packages={json.dumps(result)}\n")
-          
+
 
       - name: Create Archives
         env:
@@ -773,16 +773,16 @@ jobs:
           import os
           import tarfile
           from pathlib import Path
-          
+
           versions = json.loads(os.environ['VERSIONS'])
-          
+
           for entry in versions:
               name = entry['name']
               version = entry['version']
               install_subdir = Path('workspace/install/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}').resolve()
               input_path = Path(install_subdir / Path(name)).resolve()
               output_path = Path(install_subdir / Path('csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}' + '-' + name + '-' + version + '.tar.gz')).resolve()
-              
+
               with tarfile.open(output_path, 'w:gz') as tar:
                   for path in input_path.rglob('*'):
                       resolved_path = path.resolve()
