@@ -13,8 +13,12 @@ from csorchestrator.domain.orchestrator.workflow_config import (
     WorkflowConfig,
     Cron,
     DayOfWeek,
+    WorkflowTrigger,
+)
+from csorchestrator.frontend.release_manifest.release_creation import (
     ReleaseCreationOnTagConfig,
 )
+
 from csorchestrator.domain.context.context_os_architecture import OS
 from csorchestrator.domain.context.context_os_architecture import (
     UBUNTU_STRING_PREFIX,
@@ -52,7 +56,6 @@ from csorchestrator.frontend.step.step_custom_command import StepInstallAptPacka
 from csorchestrator.frontend.step.step_get_precompiled_lib_github import (
     StepGetPrecompiledLibGithub,
 )
-from csorchestrator.frontend.step.step_win_enable_long_paths import StepWinEnableLongPaths
 
 from csorchestrator.frontend.local_execution.step_utils import (
     StepExecuteOnlyOncePerMatrix,
@@ -88,12 +91,16 @@ def create_orchestrator() -> OptionalOrchestratorWithReport:
     )
 
     o.wf_config = WorkflowConfig(
-        on_push_branches=["main", "dev"],
-        on_push_tags=["'v*.*.*'"],
-        on_pull_request_branches=["main"],
-        on_dispatch=True,
-        on_schedule=Cron.weekly(DayOfWeek.MON, hour=3),
-        create_release_on_tag=ReleaseCreationOnTagConfig(name="release-from-artifacts"),
+        trigger=WorkflowTrigger(
+            on_push_branches=["main", "dev"],
+            on_push_tags=["'v*.*.*'"],
+            on_pull_request_branches=["main"],
+            on_dispatch=True,
+            on_schedule=Cron.weekly(DayOfWeek.MON, hour=3),
+        ),
+        create_release_on_tag=ReleaseCreationOnTagConfig(
+            name="release-from-artifacts", base_install_dir=base_install_dir
+        ),
     )
 
     # ----------------------------------------------------------------
@@ -240,8 +247,6 @@ def create_orchestrator() -> OptionalOrchestratorWithReport:
                 repo for repo, config in repos.items() if config is not None
             ],
             base_install_dir=base_install_dir,
-            id="versions",
-            output_dict_name="packages",
         )
     )
 
@@ -249,8 +254,6 @@ def create_orchestrator() -> OptionalOrchestratorWithReport:
         StepCreateArchives(
             name="Create Archives",
             description="Create archives with libs and versions",
-            input_id="versions",
-            input_dict="packages",
             base_install_dir=base_install_dir,
         ).add_extra(StepSkipExecutionOnLocal())
     )

@@ -33,11 +33,105 @@ jobs:
       - name: Show downloaded files
         run: find artifacts -type f
 
+      - name: Manifest creation
+        shell: python
+        run: |
+          from dataclasses import dataclass, field
+          from pathlib import Path
+          import json
+
+          @dataclass(frozen=True)
+          class CMakeConfigPackageVersion:
+              name: str
+              version: str
+
+          @dataclass
+          class ManifestVersionsEntry:
+              variant_string_description: str
+              entries: list[CMakeConfigPackageVersion] = field(default_factory=list)
+
+          def create_release_manifest(
+              entries: list[ManifestVersionsEntry],
+          ) -> dict[str, list[dict[str, str]]]:
+              return {
+                  entry.variant_string_description: [{"name": pv.name, "version": pv.version} for pv in entry.entries]
+                  for entry in entries
+              }
+
+          def write_release_manifest(
+              manifest: dict[str, list[dict[str, str]]],
+              filename: Path,
+          ) -> None:
+              """Write a release manifest to a JSON file."""
+              path = Path(filename)
+              # TODO robustify and return possible errors
+              with path.open("w", encoding="utf-8") as f:
+                  json.dump(manifest, f, indent=2, sort_keys=True)
+
+          def load_version_file(src: Path) -> list[CMakeConfigPackageVersion]:
+              packages = []
+              with open(src, encoding="utf-8") as f:
+                  packages = json.load(f)
+
+              # TODO make robust to errors
+              ret: list[CMakeConfigPackageVersion] = []
+              for item in packages:
+                  name = item["name"]
+                  version = item["version"]
+                  ret.append(CMakeConfigPackageVersion(name, version))
+
+              return ret
+
+          input_files_list = [
+            'csBaseLibs-0.1.0-csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninjamulticonfig/csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninjamulticonfig.csOrchestratorVersion',
+            'csBaseLibs-0.1.0-csv1-linux-ubuntu22.04-x64-generic-clang-default-ninjamulticonfig/csv1-linux-ubuntu22.04-x64-generic-clang-default-ninjamulticonfig.csOrchestratorVersion',
+            'csBaseLibs-0.1.0-csv1-linux-ubuntu22.04-arm64-generic-gcc-default-ninja/csv1-linux-ubuntu22.04-arm64-generic-gcc-default-ninja.csOrchestratorVersion',
+            'csBaseLibs-0.1.0-csv1-linux-ubuntu22.04-arm64-generic-clang-default-ninja/csv1-linux-ubuntu22.04-arm64-generic-clang-default-ninja.csOrchestratorVersion',
+            'csBaseLibs-0.1.0-csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninjamulticonfig/csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninjamulticonfig.csOrchestratorVersion',
+            'csBaseLibs-0.1.0-csv1-linux-ubuntu24.04-x64-generic-clang-default-ninjamulticonfig/csv1-linux-ubuntu24.04-x64-generic-clang-default-ninjamulticonfig.csOrchestratorVersion',
+            'csBaseLibs-0.1.0-csv1-linux-ubuntu24.04-arm64-generic-gcc-default-ninja/csv1-linux-ubuntu24.04-arm64-generic-gcc-default-ninja.csOrchestratorVersion',
+            'csBaseLibs-0.1.0-csv1-linux-ubuntu24.04-arm64-generic-clang-default-ninja/csv1-linux-ubuntu24.04-arm64-generic-clang-default-ninja.csOrchestratorVersion',
+            'csBaseLibs-0.1.0-csv1-windows-v10-x64-generic-msvc-default-msvc2022/csv1-windows-v10-x64-generic-msvc-default-msvc2022.csOrchestratorVersion',
+            'csBaseLibs-0.1.0-csv1-windows-v10-x64-generic-msvc-default-msvc2026/csv1-windows-v10-x64-generic-msvc-default-msvc2026.csOrchestratorVersion',
+            'csBaseLibs-0.1.0-csv1-windows-v10-x64-generic-msvcclang-default-msvc2022/csv1-windows-v10-x64-generic-msvcclang-default-msvc2022.csOrchestratorVersion',
+            'csBaseLibs-0.1.0-csv1-windows-v10-x64-generic-msvcclang-default-msvc2026/csv1-windows-v10-x64-generic-msvcclang-default-msvc2026.csOrchestratorVersion',
+          ]
+
+          input_names_list = [
+            'csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninjamulticonfig',
+            'csv1-linux-ubuntu22.04-x64-generic-clang-default-ninjamulticonfig',
+            'csv1-linux-ubuntu22.04-arm64-generic-gcc-default-ninja',
+            'csv1-linux-ubuntu22.04-arm64-generic-clang-default-ninja',
+            'csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninjamulticonfig',
+            'csv1-linux-ubuntu24.04-x64-generic-clang-default-ninjamulticonfig',
+            'csv1-linux-ubuntu24.04-arm64-generic-gcc-default-ninja',
+            'csv1-linux-ubuntu24.04-arm64-generic-clang-default-ninja',
+            'csv1-windows-v10-x64-generic-msvc-default-msvc2022',
+            'csv1-windows-v10-x64-generic-msvc-default-msvc2026',
+            'csv1-windows-v10-x64-generic-msvcclang-default-msvc2022',
+            'csv1-windows-v10-x64-generic-msvcclang-default-msvc2026',
+          ]
+
+          collected_version_entries: list[ManifestVersionsEntry] = []
+
+          for name,f in zip(input_names_list,input_files_list):
+            packages = load_version_file(f)
+            collected_version_entries.append(
+              ManifestVersionsEntry(name, packages)
+            )
+
+          release_manifest = create_release_manifest(collected_version_entries)
+          output_filename = Path('csBaseLibs-0.1.0.csOrchestratorManifest')
+          write_release_manifest(release_manifest,output_filename)
+
+        working-directory: artifacts
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
         with:
           files: |
-            artifacts/**/*
+            artifacts/**/*.tar.gz
+            artifacts/**/*.csOrchestratorManifest
 
   orchestrator-matrix:
     runs-on: ${{ matrix.runner }}
@@ -664,7 +758,6 @@ jobs:
         working-directory: workspace/csVisOpenGL
 
       - name: Get Versions
-        id: versions
         shell: python
         run: |
           from pathlib import Path
@@ -672,9 +765,25 @@ jobs:
           import json
           import sys
           import os
+          from dataclasses import dataclass, field
+
+          @dataclass(frozen=True)
+          class CMakeConfigPackageVersionGrep:
+              name: str
+              version_file: Path
+
+          @dataclass(frozen=True)
+          class CMakeConfigPackageVersion:
+              name: str
+              version: str
+
+          @dataclass
+          class VersionSearchOutput:
+              versions: list[CMakeConfigPackageVersion] = field(default_factory=list)
+              errors: list[str] = field(default_factory=list)
 
           def grep_package_version(filename: Path) -> tuple[str | None, str | None]:
-              path = Path(filename)
+              path = filename
 
               if not path.is_file():
                   return (None, f"ERROR: file not found: {path}")
@@ -717,74 +826,145 @@ jobs:
 
               return (matches[0], None)
 
-          files = {
-          }
+          def get_versions_helper(
+              repos_config_file_list: list[CMakeConfigPackageVersionGrep],  # pairs of repo and files reporting versions
+              repos_auto_search_list: list[str],  # repo name only
+              repos_version: list[CMakeConfigPackageVersion],  # pairs of repo and versions
+              base_install_dir: Path,
+              install_subdir: Path,
+              base_folder_path: Path | None,
+          ) -> VersionSearchOutput:
+              result = VersionSearchOutput()
 
-          result = []
+              # fixed versions
+              for repo_v in repos_version:
+                  result.versions.append(CMakeConfigPackageVersion(name=repo_v.name, version=repo_v.version))
 
+              # repo with version with file hint
+              for repo in repos_config_file_list:
+                  if base_folder_path is not None:
+                      target_full_path = base_folder_path / base_install_dir / install_subdir / repo.version_file
+                  else:
+                      target_full_path = base_install_dir / install_subdir / repo.version_file
 
-          for name, filename in files.items():
-            v_or_err = grep_package_version(filename=filename)
-            if v_or_err[0] is not None:
-                version = v_or_err[0]
-                result.append({'name': name,'version': version})
-            elif v_or_err[1] is not None:
-                sys.exit(f'ERROR: processing {name} at {filename}: {v_or_err[1]}')
-            else:
-                sys.exit('ERROR: unexpected behavior of grep_package_version processing {name} at {filename}')
+                  version_or_err = grep_package_version(target_full_path)
 
-          repos_auto_search_list = [
-              "csCore",
-              "csLie",
-              "csCamera",
-              "csVisOpenGL",
+                  if version_or_err[1] is not None:
+                      result.errors.append(version_or_err[1])
+
+                  else:
+                      assert version_or_err[0] is not None
+                      version = version_or_err[0]
+                      result.versions.append(CMakeConfigPackageVersion(name=repo.name, version=version))
+
+              # repo with version autosearch
+              for name in repos_auto_search_list:
+                  if base_folder_path is not None:
+                      search_path = base_folder_path / base_install_dir / install_subdir / name
+                  else:
+                      search_path = base_install_dir / install_subdir / name
+                  path_or_err = find_cmake_config_version(search_path=search_path, name=name)
+                  if path_or_err[1] is not None:
+                      result.errors.append(path_or_err[1])
+
+                  else:
+                      assert path_or_err[0] is not None
+                      path = path_or_err[0]
+
+                      version_or_err = grep_package_version(path)
+
+                      if version_or_err[1] is not None:
+                          result.errors.append(version_or_err[1])
+
+                      else:
+                          assert version_or_err[0] is not None
+                          version = version_or_err[0]
+                          result.versions.append(CMakeConfigPackageVersion(name=name, version=version))
+
+              return result
+
+          def write_version_file(dest: Path, src: list[CMakeConfigPackageVersion]) -> None:
+              ret = []
+              for pv in src:
+                  ret.append({"name": pv.name, "version": pv.version})
+
+              with open(dest, "w", encoding="utf-8") as f:
+                  json.dump(ret, f, indent=4, ensure_ascii=False)
+
+          repos_config_file_list : list[CMakeConfigPackageVersionGrep] = []
+
+          repos_auto_search_list : list[str] = [
+              'csCore',
+              'csLie',
+              'csCamera',
+              'csVisOpenGL',
           ]
 
-          for name in repos_auto_search_list:
-            search_path: Path = Path('workspace/install/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}') / name
-            path_or_err = find_cmake_config_version(search_path=search_path, name=name)
-            if path_or_err[0] is not None:
-              path = path_or_err[0]
-              v_or_err = grep_package_version(filename=path)
-              if v_or_err[0] is not None:
-                version = v_or_err[0]
-                result.append({'name': name,'version': version})
-              elif v_or_err[1] is not None:
-                sys.exit(f'ERROR: processing {name} at {path}: {v_or_err[1]}')
-              else:
-                sys.exit('ERROR: unexpected behavior of grep_package_version processing {name} at {path}')
-            elif path_or_err[1] is not None:
-                sys.exit(f'ERROR: processing {name} : {path_or_err[1]}')
-            else:
-                sys.exit('ERROR: unexpected behavior of find_cmake_config_version processing {name}')
+          repos_version: list[CMakeConfigPackageVersion] = []
 
+          result = get_versions_helper(
+              repos_config_file_list,
+              repos_auto_search_list,
+              repos_version,
+              Path('workspace/install'),
+              Path('csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}'),
+              None
+          )
+          if len(result.errors) > 0:
+              for e in result.errors:
+                  print(e)
+              sys.exit('ERROR: getting package versions')
 
-          output_file = os.environ["GITHUB_OUTPUT"]
-          with open(output_file, "w", encoding="utf-8") as f:
-              f.write(f"packages={json.dumps(result)}\n")
+          output_file = (
+              Path('workspace/install')
+              / Path('csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}.csOrchestratorVersion')
+          )
+
+          write_version_file(output_file, result.versions)
 
 
       - name: Create Archives
-        env:
-          VERSIONS: ${{ steps.versions.outputs.packages }}
         shell: python
         run: |
           import json
           import os
+          import sys
           import tarfile
+          from dataclasses import dataclass
           from pathlib import Path
 
-          versions = json.loads(os.environ['VERSIONS'])
+          @dataclass(frozen=True)
+          class CMakeConfigPackageVersion:
+              name: str
+              version: str
 
-          for entry in versions:
-              name = entry['name']
-              version = entry['version']
+          def load_version_file(src: Path) -> list[CMakeConfigPackageVersion]:
+              packages = []
+              with open(src, encoding="utf-8") as f:
+                  packages = json.load(f)
+
+              # TODO make robust to errors
+              ret: list[CMakeConfigPackageVersion] = []
+              for item in packages:
+                  name = item["name"]
+                  version = item["version"]
+                  ret.append(CMakeConfigPackageVersion(name, version))
+
+              return ret
+
+
+          packages = load_version_file('workspace/install/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}.csOrchestratorVersion')
+
+          if packages is None:
+              sys.exit('packages was not loaded')
+
+          for item in packages:
               install_subdir = Path('workspace/install/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}').resolve()
-              input_path = Path(install_subdir / Path(name)).resolve()
-              output_path = Path(install_subdir / Path('csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}' + '-' + name + '-' + version + '.tar.gz')).resolve()
+              source_path = Path(install_subdir / Path(item.name)).resolve()
+              output_path = Path(install_subdir / Path('csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}' + '-' + item.name + '-' + item.version + '.tar.gz')).resolve()
 
               with tarfile.open(output_path, 'w:gz') as tar:
-                  for path in input_path.rglob('*'):
+                  for path in source_path.rglob('*'):
                       resolved_path = path.resolve()
                       arcname = path.resolve().relative_to(install_subdir)
                       tar.add(resolved_path, arcname=arcname)
@@ -793,4 +973,6 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: csBaseLibs-0.1.0-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-          path: workspace/install/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/*.tar.gz
+          path: |
+            workspace/install/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/*.tar.gz
+            workspace/install/*.csOrchestratorVersion
