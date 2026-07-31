@@ -69,8 +69,10 @@ from csorchestrator.application.factory.factory import (
 )
 from csorchestrator.application.cli.cli import orchestrator_main_with_default_run
 
+from csorchestrator.frontend.recipes.manifest_github import ManifestGithub, create_steps_to_get_libs_from_manifest, download_manifest
+from csorchestrator.frontend.release_manifest.manifest import load_release_manifest, parse_release_manifest
 
-def create_orchestrator() -> OptionalOrchestratorWithReport:
+def create_orchestrator(target_folder_path : Path) -> OptionalOrchestratorWithReport:
     report = Report()
 
     base_target_dir = Path("workspace")
@@ -102,6 +104,7 @@ def create_orchestrator() -> OptionalOrchestratorWithReport:
             name="release-from-artifacts", base_install_dir=base_install_dir
         ),
     )
+
 
     # ----------------------------------------------------------------
     p = o.create_phase("Repos Update")
@@ -152,36 +155,35 @@ def create_orchestrator() -> OptionalOrchestratorWithReport:
     # ----------------------------------------------------------------
     p = o.create_phase("Get Precompiled Libraries")
 
-    list_3rdPartyBaseLibs: dict[str, str] = {
-        "eigen3": "3.4.0",
-        "fmt": "11.2.1",
-        "fmt-eigen": "1.0.0",
-        "cpptrace": "0.8.3",
-        "magic_enum": "0.9.7",
-        "libassert": "2.1.5",
-        "tclap": "1.0.0",
-        "Catch2": "3.10.0",
-        "pipes": "0.0.1",
-        "NamedType": "1.1.0",
-        "tl-expected": "1.2.0",
-        "tl-optional": "1.0.0",
-    }
+    manifest_desc = ManifestGithub(
+        base_url=StepGetPrecompiledLibGithub.GITHUB_BASE_URL_HTTPS,
+        org="cscosine",
+        project_name="3rdPartyBaseLibs",
+        release_tag="v0.1.10",
+        project_version="0.1.0",
+    )
 
-    for lib_name, lib_version in list_3rdPartyBaseLibs.items():
-        p.add_step(
-            StepGetPrecompiledLibGithub(
-                name=f"Get Precompiled Lib {lib_name} from 3rdPartyBaseLibs",
-                description="get precompiled lib from github release",
-                base_url=StepGetPrecompiledLibGithub.GITHUB_BASE_URL_HTTPS,
-                org="cscosine",
-                project_name="3rdPartyBaseLibs",
-                project_tag="v0.1.0",
-                lib_name=lib_name,
-                lib_version=lib_version,
-                base_libs_dir=base_libs_dir,
-            )
-        )
+    manifest_path_with_report = download_manifest(manifest_desc, target_folder_path / base_libs_dir)
 
+    if manifest_path_with_report.result is None:
+        report.append_report(manifest_path_with_report.report)
+        return OptionalResultWithReport.createReport(report)
+
+    manifest_path = manifest_path_with_report.result
+    manifest_raw = load_release_manifest(manifest_path)
+    manifest_loaded = parse_release_manifest(manifest_raw)
+
+    steps_opt = create_steps_to_get_libs_from_manifest(manifest_desc, manifest_loaded, base_libs_dir)
+    if steps_opt.error is not None:
+        report.append_error(steps_opt.error)
+        return OptionalResultWithReport.createReport(report)
+
+    assert steps_opt.value is not None
+    steps = steps_opt.value
+
+    for s in steps:
+        p.add_step(s)
+    
     def qt6_mapping(
         context: ContextOsArchitectureCompilerGenerator,
     ) -> ContextOsArchitectureCompilerGenerator | None:
