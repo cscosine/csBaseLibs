@@ -1,137 +1,55 @@
 #!/usr/bin/env python3
 import sys
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Sequence
 
+from csorchestrator.application.cli.cli import orchestrator_main_with_default_run
+from csorchestrator.application.factory.factory import OptionalOrchestratorWithReport
+from csorchestrator.application.recipes.checkout_build import (
+    build_repos,
+    checkout_repos,
+    create_and_upload_artifacts,
+)
+from csorchestrator.application.recipes.create_orchestrator import create_default_orchestrator
+from csorchestrator.domain.context.context_os_architecture import OS, UBUNTU_STRING_PREFIX
 from csorchestrator.foundation.core.report import Report
-from csorchestrator.foundation.core.optional_result_with_report import (
-    OptionalResultWithReport,
-)
-from csorchestrator.foundation.git.resolve_url import RepoUrlParts
-
-from csorchestrator.domain.orchestrator.workflow_config import (
-    WorkflowConfig,
-    Cron,
-    DayOfWeek,
-    WorkflowTrigger,
-)
-from csorchestrator.frontend.release_manifest.release_creation import (
-    ReleaseCreationOnTagConfig,
-)
-
-from csorchestrator.domain.context.context_os_architecture import OS
-from csorchestrator.domain.context.context_os_architecture import (
-    UBUNTU_STRING_PREFIX,
-    UBUNTU_VERSIONS,
-)
-
-from csorchestrator.domain.context.context_os_architecture_compiler_generator import (
-    ContextOsArchitectureCompilerGenerator,
-)
-from csorchestrator.domain.context.context_compiler_generator import (
-    ContextCompilerGenerator,
-    Compiler,
-    GeneratorWithType,
-)
-
-from csorchestrator.frontend.cscmake_presets.supported_variants import (
-    BuildConfig,
-)
-
-from csorchestrator.frontend.step.step_get_repository import (
-    StepGetRepositoryGitHub,
-    StepGetRepositoryExtraDepthOne,
-    StepGetRepositoryExtraAccessToken,
-)
-from csorchestrator.frontend.step.step_cmake_command import StepCMakeWorkflow
-from csorchestrator.frontend.step.step_get_versions_from_cmake_config_package_version import (
-    StepGetVersionsFromCMakeConfigPackageVersion,
-)
-from csorchestrator.frontend.step.step_create_archives import StepCreateArchives
-from csorchestrator.frontend.step.step_upload_artifacts import (
-    StepUploadArtifacts,
-    create_artifact_prefix_from_orchestrator_name_version,
+from csorchestrator.frontend.cscmake_presets.supported_variants import BuildConfig
+from csorchestrator.frontend.local_execution.step_utils import (
+    StepExecuteOnlyOn,
+    StepExecuteOnlyOncePerMatrix,
 )
 from csorchestrator.frontend.step.step_custom_command import StepInstallAptPackages
-from csorchestrator.frontend.step.step_get_precompiled_lib_github import (
-    StepGetPrecompiledLibGithub,
-)
 
-from csorchestrator.frontend.local_execution.step_utils import (
-    StepExecuteOnlyOncePerMatrix,
-    StepSkipExecutionOnLocal,
-    StepExecuteOnlyOn,
-)
 
-from csorchestrator.application.factory.factory import (
-    OptionalOrchestratorWithReport,
-    create_orchestrator_factory_all_supported_cases,
-)
-from csorchestrator.application.cli.cli import orchestrator_main_with_default_run
-
-from csorchestrator.frontend.recipes.manifest_github import ManifestGithub, create_steps_to_get_libs_from_manifest, download_manifest
-from csorchestrator.frontend.release_manifest.manifest import load_release_manifest, parse_release_manifest
-
-def create_orchestrator(target_folder_path : Path) -> OptionalOrchestratorWithReport:
+def create_orchestrator() -> OptionalOrchestratorWithReport:
     report = Report()
 
     base_target_dir = Path("workspace")
     base_install_dir = base_target_dir / Path("install")
-    base_libs_dir = base_target_dir / Path("libs")
     common_repo_ref = "dev"
 
-    repos: dict[str, None | BuildConfig] = {
-        "csCMake": None,
-        "csCore": BuildConfig.DEBUG_RELEASE_RELWITHDEBINFO_PARANOID,
-        "csLie": BuildConfig.DEBUG_RELEASE_RELWITHDEBINFO_PARANOID,
-        "csCamera": BuildConfig.DEBUG_RELEASE_RELWITHDEBINFO_PARANOID,
-        "csVisOpenGL": BuildConfig.DEBUG_RELEASE_RELWITHDEBINFO_PARANOID,
+    repos: dict[str, tuple[str, BuildConfig | None]] = {
+        "csCMake": (common_repo_ref, None),
+        "csCore": (common_repo_ref, BuildConfig.DEBUG_RELEASE_RELWITHDEBINFO_PARANOID),
+        "csLie": (common_repo_ref, BuildConfig.DEBUG_RELEASE_RELWITHDEBINFO_PARANOID),
+        "csCamera": (common_repo_ref, BuildConfig.DEBUG_RELEASE_RELWITHDEBINFO_PARANOID),
+        "csVisOpenGL": (common_repo_ref, BuildConfig.DEBUG_RELEASE_RELWITHDEBINFO_PARANOID),
     }
 
-    o = create_orchestrator_factory_all_supported_cases(
-        name="csBaseLibs", version="0.1.0", execution_matrix_name="orchestrator-matrix"
+    o = create_default_orchestrator(
+        name="csBaseLibs",
+        version="0.1.0",
+        base_install_dir=base_install_dir,
+        additional_files_list=[Path("csBaseLibs/cs_orchestrator_config.py")],
     )
-
-    o.wf_config = WorkflowConfig(
-        trigger=WorkflowTrigger(
-            on_push_branches=["main", "dev"],
-            on_push_tags=["'v*.*.*'"],
-            on_pull_request_branches=["main"],
-            on_dispatch=True,
-            on_schedule=Cron.weekly(DayOfWeek.MON, hour=3),
-        ),
-        create_release_on_tag=ReleaseCreationOnTagConfig(
-            name="release-from-artifacts", base_install_dir=base_install_dir
-        ),
-    )
-
 
     # ----------------------------------------------------------------
-    p = o.create_phase("Repos Update")
-    for repo in repos.keys():
-        p.add_step(
-            StepGetRepositoryGitHub(
-                name=f"{repo} Git clone/pull-ff",
-                description=f"Clone or pull-ff {repo} description",
-                target_directory=(base_target_dir / repo).as_posix(),
-                repo_url_parts=RepoUrlParts(
-                    repo_base_url=StepGetRepositoryGitHub.GITHUB_BASE_URL_SSH,
-                    repo_org="cscosine",
-                    repo_name=repo + ".git",
-                ),
-                repo_ref=common_repo_ref,
-            )
-            .add_extra(
-                StepGetRepositoryExtraDepthOne(
-                    on_local_checkout=False,
-                    on_github_action_checkout=True,
-                )
-            )
-            .add_extra(StepExecuteOnlyOncePerMatrix())
-            .add_extra(
-                StepGetRepositoryExtraAccessToken("${{ secrets.ACTIONS_ORG_ACCESS }}")
-            )
-        )
+    checkout_repos(
+        orchestrator=o,
+        base_target_dir=base_target_dir,
+        repo_ref_build_type_list=repos,
+        repo_access_token="${{ secrets.ACTIONS_ORG_ACCESS }}",
+    )
 
     # ----------------------------------------------------------------
     p = o.create_phase("Install Requirements (Linux-Ubuntu)")
@@ -147,129 +65,34 @@ def create_orchestrator(target_folder_path : Path) -> OptionalOrchestratorWithRe
             dry_run=False,
         )
         .add_extra(StepExecuteOnlyOncePerMatrix())
-        .add_extra(
-            StepExecuteOnlyOn(os=OS.LINUX, version_starts_with=UBUNTU_STRING_PREFIX)
-        )
+        .add_extra(StepExecuteOnlyOn(os=OS.LINUX, version_starts_with=UBUNTU_STRING_PREFIX))
     )
 
     # ----------------------------------------------------------------
-    p = o.create_phase("Get Precompiled Libraries")
-
-    manifest_desc = ManifestGithub(
-        base_url=StepGetPrecompiledLibGithub.GITHUB_BASE_URL_HTTPS,
-        org="cscosine",
-        project_name="3rdPartyBaseLibs",
-        release_tag="v0.1.10",
-        project_version="0.1.0",
-    )
-
-    manifest_path_with_report = download_manifest(manifest_desc, target_folder_path / base_libs_dir)
-
-    if manifest_path_with_report.result is None:
-        report.append_report(manifest_path_with_report.report)
-        return OptionalResultWithReport.createReport(report)
-
-    manifest_path = manifest_path_with_report.result
-    manifest_raw = load_release_manifest(manifest_path)
-    manifest_loaded = parse_release_manifest(manifest_raw)
-
-    steps_opt = create_steps_to_get_libs_from_manifest(manifest_desc, manifest_loaded, base_libs_dir)
-    if steps_opt.error is not None:
-        report.append_error(steps_opt.error)
-        return OptionalResultWithReport.createReport(report)
-
-    assert steps_opt.value is not None
-    steps = steps_opt.value
-
-    for s in steps:
-        p.add_step(s)
-    
-    def qt6_mapping(
-        context: ContextOsArchitectureCompilerGenerator,
-    ) -> ContextOsArchitectureCompilerGenerator | None:
-        if context.context_os_architecture.os == OS.LINUX:
-            if (
-                context.context_os_architecture.os_version
-                == UBUNTU_VERSIONS.UBUNTU_22_04.value
-                or context.context_os_architecture.os_version
-                == UBUNTU_VERSIONS.UBUNTU_24_04.value
-            ):
-                newContext = context
-                newContext.context_compiler_generator = ContextCompilerGenerator(
-                    compiler_family=Compiler.GCC,
-                    compiler_version=ContextCompilerGenerator.COMPILER_VERSION_DEFAULT,
-                    build_generator=GeneratorWithType.NINJA,
-                )
-                return newContext
-        elif context.context_os_architecture.os == OS.WINDOWS:
-            newContext = context
-            newContext.context_compiler_generator = ContextCompilerGenerator(
-                compiler_family=Compiler.MSVC,
-                compiler_version=ContextCompilerGenerator.COMPILER_VERSION_MSVC_2022_17,
-                build_generator=GeneratorWithType.NINJA,
-            )
-            return newContext
-        return None
-
-    p.add_step(
-        StepGetPrecompiledLibGithub(
-            name="Get Precompiled Lib qt6",
-            description="get precompiled lib from github release",
-            base_url=StepGetPrecompiledLibGithub.GITHUB_BASE_URL_HTTPS,
-            org="cscosine",
-            project_name="csQt6",
-            project_tag="v6.11.1",
-            lib_name="qt6",
-            lib_version="v6.11.1",
-            base_libs_dir=base_libs_dir,
-            mapping_function=qt6_mapping,
-        )
-    )
+    # Get Precompiled Libraries
+    #
+    # TODO: reimplement precompiled libraries retrieval from the release manifest
+    # (3rdPartyBaseLibs + csQt6). The old `create_steps_to_get_libs_from_manifest`
+    # helper has been removed from csOrchestrator. The qt6 toolchain mapping will
+    # come automatically from the csQt6 download; `csBaseLibs/cs_orchestrator_config.py`
+    # is intentionally an empty placeholder for now.
+    # p = o.create_phase("Get Precompiled Libraries")
+    # ...
 
     # ----------------------------------------------------------------
-    p = o.create_phase("Configure-Build-Test-Install")
-    for repo, config in repos.items():
-        if config is not None:
-            p.add_step(
-                StepCMakeWorkflow(
-                    name=f"{repo} CMake Workflow",
-                    description=f"CMake workflow for {repo} with config: {config}",
-                    source_dir=(base_target_dir / repo).as_posix(),
-                    config=config,
-                )
-            )
-
-    # ----------------------------------------------------------------
-    p = o.create_phase("Create and Upload Artifacts")
-    p.add_step(
-        StepGetVersionsFromCMakeConfigPackageVersion(
-            name="Get Versions",
-            description="Get Versions for all libs",
-            repos_auto_search_list=[
-                repo for repo, config in repos.items() if config is not None
-            ],
-            base_install_dir=base_install_dir,
-        )
+    build_repos(
+        orchestrator=o,
+        base_target_dir=base_target_dir,
+        repo_ref_build_type_list=repos,
     )
 
-    p.add_step(
-        StepCreateArchives(
-            name="Create Archives",
-            description="Create archives with libs and versions",
-            base_install_dir=base_install_dir,
-        ).add_extra(StepSkipExecutionOnLocal())
+    create_and_upload_artifacts(
+        orchestrator=o,
+        base_install_dir=base_install_dir,
+        repo_ref_build_type_list=repos,
     )
 
-    p.add_step(
-        StepUploadArtifacts(
-            name="Upload Artifacts",
-            description="Upload Artifacts with libs and versions",
-            base_install_dir=base_install_dir,
-            artifact_prefix=create_artifact_prefix_from_orchestrator_name_version(o),
-        )
-    )
-
-    return OptionalResultWithReport.createResultAndReport(o, report)
+    return OptionalOrchestratorWithReport.createResultAndReport(o, report)
 
 
 def main(argv: Sequence[str] | None = None) -> int:

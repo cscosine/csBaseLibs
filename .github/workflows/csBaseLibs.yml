@@ -1,870 +1,453 @@
 name: csBaseLibs
-
-on:
+'on':
   push:
     branches:
-      - main
-      - dev
+    - main
+    - dev
     tags:
-      - 'v*.*.*'
+    - v*.*.*
   pull_request:
     branches:
-      - main
-  workflow_dispatch:
+    - main
+  workflow_dispatch: {}
   schedule:
-    - cron: '0 3 * * 1'
-
+  - cron: 0 3 * * 1
 jobs:
   release-from-artifacts:
     needs: orchestrator-matrix
     runs-on: ubuntu-latest
-
-    if: ${{ github.ref_type == 'tag' }}
-
     permissions:
       contents: write
-
     steps:
-      - name: Download all artifacts
-        uses: actions/download-artifact@v8
-        with:
-          path: artifacts
+    - name: Repo Self Checkout
+      uses: actions/checkout@v6
+    - name: Download all artifacts
+      uses: actions/download-artifact@v8
+      with:
+        path: artifacts
+    - name: Show downloaded files
+      run: find artifacts -type f
+    - name: Manifest creation
+      run: |-
+        import os  # noqa: F401 keep even if locally unused, necessary with variable subst
+        import sys
+        from pathlib import Path
+        from typing import cast
 
-      - name: Show downloaded files
-        run: find artifacts -type f
+        from csorchestratorsdk.portable.release_manifest import (
+            collect_release_manifest_single_variant_and_prepare_manifest,
+        )
 
-      - name: Manifest creation
-        shell: python
-        run: |
-          from dataclasses import dataclass, field
-          from pathlib import Path
-          import json
+        input_manifest_path_variant = [(Path('csBaseLibs-0.1.0-csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninjamulticonfig/csBaseLibs-0.1.0-csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninjamulticonfig.csOrchestratorManifest'), 'csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninjamulticonfig'), (Path('csBaseLibs-0.1.0-csv1-linux-ubuntu22.04-x64-generic-clang-default-ninjamulticonfig/csBaseLibs-0.1.0-csv1-linux-ubuntu22.04-x64-generic-clang-default-ninjamulticonfig.csOrchestratorManifest'), 'csv1-linux-ubuntu22.04-x64-generic-clang-default-ninjamulticonfig'), (Path('csBaseLibs-0.1.0-csv1-linux-ubuntu22.04-arm64-generic-gcc-default-ninja/csBaseLibs-0.1.0-csv1-linux-ubuntu22.04-arm64-generic-gcc-default-ninja.csOrchestratorManifest'), 'csv1-linux-ubuntu22.04-arm64-generic-gcc-default-ninja'), (Path('csBaseLibs-0.1.0-csv1-linux-ubuntu22.04-arm64-generic-clang-default-ninja/csBaseLibs-0.1.0-csv1-linux-ubuntu22.04-arm64-generic-clang-default-ninja.csOrchestratorManifest'), 'csv1-linux-ubuntu22.04-arm64-generic-clang-default-ninja'), (Path('csBaseLibs-0.1.0-csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninjamulticonfig/csBaseLibs-0.1.0-csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninjamulticonfig.csOrchestratorManifest'), 'csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninjamulticonfig'), (Path('csBaseLibs-0.1.0-csv1-linux-ubuntu24.04-x64-generic-clang-default-ninjamulticonfig/csBaseLibs-0.1.0-csv1-linux-ubuntu24.04-x64-generic-clang-default-ninjamulticonfig.csOrchestratorManifest'), 'csv1-linux-ubuntu24.04-x64-generic-clang-default-ninjamulticonfig'), (Path('csBaseLibs-0.1.0-csv1-linux-ubuntu24.04-arm64-generic-gcc-default-ninja/csBaseLibs-0.1.0-csv1-linux-ubuntu24.04-arm64-generic-gcc-default-ninja.csOrchestratorManifest'), 'csv1-linux-ubuntu24.04-arm64-generic-gcc-default-ninja'), (Path('csBaseLibs-0.1.0-csv1-linux-ubuntu24.04-arm64-generic-clang-default-ninja/csBaseLibs-0.1.0-csv1-linux-ubuntu24.04-arm64-generic-clang-default-ninja.csOrchestratorManifest'), 'csv1-linux-ubuntu24.04-arm64-generic-clang-default-ninja'), (Path('csBaseLibs-0.1.0-csv1-windows-v10-x64-generic-msvc-default-msvc2022/csBaseLibs-0.1.0-csv1-windows-v10-x64-generic-msvc-default-msvc2022.csOrchestratorManifest'), 'csv1-windows-v10-x64-generic-msvc-default-msvc2022'), (Path('csBaseLibs-0.1.0-csv1-windows-v10-x64-generic-msvc-default-msvc2026/csBaseLibs-0.1.0-csv1-windows-v10-x64-generic-msvc-default-msvc2026.csOrchestratorManifest'), 'csv1-windows-v10-x64-generic-msvc-default-msvc2026'), (Path('csBaseLibs-0.1.0-csv1-windows-v10-x64-generic-msvcclang-default-msvc2022/csBaseLibs-0.1.0-csv1-windows-v10-x64-generic-msvcclang-default-msvc2022.csOrchestratorManifest'), 'csv1-windows-v10-x64-generic-msvcclang-default-msvc2022'), (Path('csBaseLibs-0.1.0-csv1-windows-v10-x64-generic-msvcclang-default-msvc2026/csBaseLibs-0.1.0-csv1-windows-v10-x64-generic-msvcclang-default-msvc2026.csOrchestratorManifest'), 'csv1-windows-v10-x64-generic-msvcclang-default-msvc2026')]
+        output_filepath = Path('csBaseLibs-0.1.0.csOrchestratorManifest')
+        project_name = 'csBaseLibs'
+        project_version = "__PROJECT_VERSION__"
+        base_path_additional_files = Path(os.environ["GITHUB_WORKSPACE"])
+        list_additional_files = [Path('csBaseLibs/cs_orchestrator_config.py')]
+        output_folder_additional_files = Path('.')
+        output_bundle_file_name = Path('csBaseLibs-0.1.0-bundle.tar.gz')
 
-          @dataclass(frozen=True)
-          class CMakeConfigPackageVersion:
-              name: str
-              version: str
+        errors_list = collect_release_manifest_single_variant_and_prepare_manifest(
+            input_manifest_path_variant=input_manifest_path_variant,
+            output_filepath=output_filepath,
+            project_name=project_name,
+            project_version=project_version,
+            base_path_additional_files=base_path_additional_files,
+            list_additional_files=list_additional_files,
+            output_folder_additional_files=output_folder_additional_files,
+            output_bundle_file_name=output_bundle_file_name,
+        )
 
-          @dataclass
-          class ManifestVersionsEntry:
-              variant_string_description: str
-              entries: list[CMakeConfigPackageVersion] = field(default_factory=list)
-
-          def create_release_manifest(
-              entries: list[ManifestVersionsEntry],
-          ) -> dict[str, list[dict[str, str]]]:
-              return {
-                  entry.variant_string_description: [{"name": pv.name, "version": pv.version} for pv in entry.entries]
-                  for entry in entries
-              }
-
-          def write_release_manifest(
-              manifest_entries: dict[str, list[dict[str, str]]],
-              filename: Path,
-          ) -> None:
-              """Write a release manifest to a JSON file."""
-              path = Path(filename)
-              # TODO robustify and return possible errors
-              with path.open("w", encoding="utf-8") as f:
-                  json.dump(manifest, f, indent=2, sort_keys=True)
-
-          def load_version_file(src: Path) -> list[CMakeConfigPackageVersion]:
-              packages = []
-              with open(src, encoding="utf-8") as f:
-                  packages = json.load(f)
-
-              # TODO make robust to errors
-              ret: list[CMakeConfigPackageVersion] = []
-              for item in packages:
-                  name = item["name"]
-                  version = item["version"]
-                  ret.append(CMakeConfigPackageVersion(name, version))
-
-              return ret
-
-          input_files_list = [
-            'csBaseLibs-0.1.0-csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninjamulticonfig/csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninjamulticonfig.csOrchestratorVersion',
-            'csBaseLibs-0.1.0-csv1-linux-ubuntu22.04-x64-generic-clang-default-ninjamulticonfig/csv1-linux-ubuntu22.04-x64-generic-clang-default-ninjamulticonfig.csOrchestratorVersion',
-            'csBaseLibs-0.1.0-csv1-linux-ubuntu22.04-arm64-generic-gcc-default-ninja/csv1-linux-ubuntu22.04-arm64-generic-gcc-default-ninja.csOrchestratorVersion',
-            'csBaseLibs-0.1.0-csv1-linux-ubuntu22.04-arm64-generic-clang-default-ninja/csv1-linux-ubuntu22.04-arm64-generic-clang-default-ninja.csOrchestratorVersion',
-            'csBaseLibs-0.1.0-csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninjamulticonfig/csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninjamulticonfig.csOrchestratorVersion',
-            'csBaseLibs-0.1.0-csv1-linux-ubuntu24.04-x64-generic-clang-default-ninjamulticonfig/csv1-linux-ubuntu24.04-x64-generic-clang-default-ninjamulticonfig.csOrchestratorVersion',
-            'csBaseLibs-0.1.0-csv1-linux-ubuntu24.04-arm64-generic-gcc-default-ninja/csv1-linux-ubuntu24.04-arm64-generic-gcc-default-ninja.csOrchestratorVersion',
-            'csBaseLibs-0.1.0-csv1-linux-ubuntu24.04-arm64-generic-clang-default-ninja/csv1-linux-ubuntu24.04-arm64-generic-clang-default-ninja.csOrchestratorVersion',
-            'csBaseLibs-0.1.0-csv1-windows-v10-x64-generic-msvc-default-msvc2022/csv1-windows-v10-x64-generic-msvc-default-msvc2022.csOrchestratorVersion',
-            'csBaseLibs-0.1.0-csv1-windows-v10-x64-generic-msvc-default-msvc2026/csv1-windows-v10-x64-generic-msvc-default-msvc2026.csOrchestratorVersion',
-            'csBaseLibs-0.1.0-csv1-windows-v10-x64-generic-msvcclang-default-msvc2022/csv1-windows-v10-x64-generic-msvcclang-default-msvc2022.csOrchestratorVersion',
-            'csBaseLibs-0.1.0-csv1-windows-v10-x64-generic-msvcclang-default-msvc2026/csv1-windows-v10-x64-generic-msvcclang-default-msvc2026.csOrchestratorVersion',
-          ]
-
-          input_names_list = [
-            'csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninjamulticonfig',
-            'csv1-linux-ubuntu22.04-x64-generic-clang-default-ninjamulticonfig',
-            'csv1-linux-ubuntu22.04-arm64-generic-gcc-default-ninja',
-            'csv1-linux-ubuntu22.04-arm64-generic-clang-default-ninja',
-            'csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninjamulticonfig',
-            'csv1-linux-ubuntu24.04-x64-generic-clang-default-ninjamulticonfig',
-            'csv1-linux-ubuntu24.04-arm64-generic-gcc-default-ninja',
-            'csv1-linux-ubuntu24.04-arm64-generic-clang-default-ninja',
-            'csv1-windows-v10-x64-generic-msvc-default-msvc2022',
-            'csv1-windows-v10-x64-generic-msvc-default-msvc2026',
-            'csv1-windows-v10-x64-generic-msvcclang-default-msvc2022',
-            'csv1-windows-v10-x64-generic-msvcclang-default-msvc2026',
-          ]
-
-          collected_version_entries: list[ManifestVersionsEntry] = []
-
-          for name,f in zip(input_names_list,input_files_list):
-            packages = load_version_file(f)
-            collected_version_entries.append(
-              ManifestVersionsEntry(name, packages)
-            )
-
-          release_manifest = create_release_manifest(collected_version_entries)
-          output_filename = Path('csBaseLibs-0.1.0.csOrchestratorManifest')
-          write_release_manifest(release_manifest,output_filename)
-
-        working-directory: artifacts
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v3
-        with:
-          files: |
-            artifacts/**/*.tar.gz
-            artifacts/**/*.csOrchestratorManifest
-
+        if len(errors_list) > 0:
+            for e in errors_list:
+                print(e)
+            sys.exit("ERROR: getting package versions")
+      shell: python
+      env:
+        PYTHONPATH: ${{ github.workspace }}
+      working-directory: artifacts
+    - name: Upload manifest as artifacts
+      uses: actions/upload-artifact@v7
+      with:
+        name: manifest.csOrchestratorManifest
+        path: |-
+          artifacts/**/*.csOrchestratorManifest
+    - name: Upload additional file csBaseLibs-0.1.0-bundle.tar.gz as artifact
+      uses: actions/upload-artifact@v7
+      with:
+        name: csBaseLibs-0.1.0-bundle.tar.gz
+        path: |-
+          artifacts/csBaseLibs-0.1.0-bundle.tar.gz
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v3
+      with:
+        files: |-
+          artifacts/**/*.tar.gz
+          artifacts/**/*.csOrchestratorManifest
+          artifacts/csBaseLibs-0.1.0-bundle.tar.gz
+      if: ${{ github.ref_type == 'tag' }}
   orchestrator-matrix:
     runs-on: ${{ matrix.runner }}
-
     strategy:
       fail-fast: false
       matrix:
         include:
-          - execution_id: 0
-            os: linux
-            os_version: ubuntu22.04
-            architecture: x64
-            architecture_variant: generic
-            compiler: gcc
-            c_compiler: gcc
-            cpp_compiler: g++
-            compiler_version: default
-            generator: ninjamulticonfig
-            generator_type: multiconfig
-            generator_cmake: Ninja Multi-Config
-            runner: ubuntu-22.04
-          - execution_id: 1
-            os: linux
-            os_version: ubuntu22.04
-            architecture: x64
-            architecture_variant: generic
-            compiler: clang
-            c_compiler: clang
-            cpp_compiler: clang++
-            compiler_version: default
-            generator: ninjamulticonfig
-            generator_type: multiconfig
-            generator_cmake: Ninja Multi-Config
-            runner: ubuntu-22.04
-          - execution_id: 2
-            os: linux
-            os_version: ubuntu22.04
-            architecture: arm64
-            architecture_variant: generic
-            compiler: gcc
-            c_compiler: gcc
-            cpp_compiler: g++
-            compiler_version: default
-            generator: ninja
-            generator_type: singleconfig
-            generator_cmake: Ninja
-            runner: ubuntu-22.04-arm
-          - execution_id: 3
-            os: linux
-            os_version: ubuntu22.04
-            architecture: arm64
-            architecture_variant: generic
-            compiler: clang
-            c_compiler: clang
-            cpp_compiler: clang++
-            compiler_version: default
-            generator: ninja
-            generator_type: singleconfig
-            generator_cmake: Ninja
-            runner: ubuntu-22.04-arm
-          - execution_id: 4
-            os: linux
-            os_version: ubuntu24.04
-            architecture: x64
-            architecture_variant: generic
-            compiler: gcc
-            c_compiler: gcc
-            cpp_compiler: g++
-            compiler_version: default
-            generator: ninjamulticonfig
-            generator_type: multiconfig
-            generator_cmake: Ninja Multi-Config
-            runner: ubuntu-24.04
-          - execution_id: 5
-            os: linux
-            os_version: ubuntu24.04
-            architecture: x64
-            architecture_variant: generic
-            compiler: clang
-            c_compiler: clang
-            cpp_compiler: clang++
-            compiler_version: default
-            generator: ninjamulticonfig
-            generator_type: multiconfig
-            generator_cmake: Ninja Multi-Config
-            runner: ubuntu-24.04
-          - execution_id: 6
-            os: linux
-            os_version: ubuntu24.04
-            architecture: arm64
-            architecture_variant: generic
-            compiler: gcc
-            c_compiler: gcc
-            cpp_compiler: g++
-            compiler_version: default
-            generator: ninja
-            generator_type: singleconfig
-            generator_cmake: Ninja
-            runner: ubuntu-24.04-arm
-          - execution_id: 7
-            os: linux
-            os_version: ubuntu24.04
-            architecture: arm64
-            architecture_variant: generic
-            compiler: clang
-            c_compiler: clang
-            cpp_compiler: clang++
-            compiler_version: default
-            generator: ninja
-            generator_type: singleconfig
-            generator_cmake: Ninja
-            runner: ubuntu-24.04-arm
-          - execution_id: 8
-            os: windows
-            os_version: v10
-            architecture: x64
-            architecture_variant: generic
-            compiler: msvc
-            compiler_version: default
-            generator: msvc2022
-            generator_type: multiconfig
-            generator_cmake: Visual Studio 17 2022
-            runner: windows-2022
-          - execution_id: 9
-            os: windows
-            os_version: v10
-            architecture: x64
-            architecture_variant: generic
-            compiler: msvc
-            compiler_version: default
-            generator: msvc2026
-            generator_type: multiconfig
-            generator_cmake: Visual Studio 18 2026
-            runner: windows-2025-vs2026
-          - execution_id: 10
-            os: windows
-            os_version: v10
-            architecture: x64
-            architecture_variant: generic
-            compiler: msvcclang
-            toolset: ClangCL
-            compiler_version: default
-            generator: msvc2022
-            generator_type: multiconfig
-            generator_cmake: Visual Studio 17 2022
-            runner: windows-2022
-          - execution_id: 11
-            os: windows
-            os_version: v10
-            architecture: x64
-            architecture_variant: generic
-            compiler: msvcclang
-            toolset: ClangCL
-            compiler_version: default
-            generator: msvc2026
-            generator_type: multiconfig
-            generator_cmake: Visual Studio 18 2026
-            runner: windows-2025-vs2026
-
+        - execution_id: '0'
+          os: linux
+          os_version: ubuntu22.04
+          architecture: x64
+          architecture_variant: generic
+          compiler: gcc
+          compiler_version: default
+          generator: ninjamulticonfig
+          generator_type: multiconfig
+          generator_cmake: Ninja Multi-Config
+          runner: ubuntu-22.04
+          c_compiler: gcc
+          cpp_compiler: g++
+        - execution_id: '1'
+          os: linux
+          os_version: ubuntu22.04
+          architecture: x64
+          architecture_variant: generic
+          compiler: clang
+          compiler_version: default
+          generator: ninjamulticonfig
+          generator_type: multiconfig
+          generator_cmake: Ninja Multi-Config
+          runner: ubuntu-22.04
+          c_compiler: clang
+          cpp_compiler: clang++
+        - execution_id: '2'
+          os: linux
+          os_version: ubuntu22.04
+          architecture: arm64
+          architecture_variant: generic
+          compiler: gcc
+          compiler_version: default
+          generator: ninja
+          generator_type: singleconfig
+          generator_cmake: Ninja
+          runner: ubuntu-22.04-arm
+          c_compiler: gcc
+          cpp_compiler: g++
+        - execution_id: '3'
+          os: linux
+          os_version: ubuntu22.04
+          architecture: arm64
+          architecture_variant: generic
+          compiler: clang
+          compiler_version: default
+          generator: ninja
+          generator_type: singleconfig
+          generator_cmake: Ninja
+          runner: ubuntu-22.04-arm
+          c_compiler: clang
+          cpp_compiler: clang++
+        - execution_id: '4'
+          os: linux
+          os_version: ubuntu24.04
+          architecture: x64
+          architecture_variant: generic
+          compiler: gcc
+          compiler_version: default
+          generator: ninjamulticonfig
+          generator_type: multiconfig
+          generator_cmake: Ninja Multi-Config
+          runner: ubuntu-24.04
+          c_compiler: gcc
+          cpp_compiler: g++
+        - execution_id: '5'
+          os: linux
+          os_version: ubuntu24.04
+          architecture: x64
+          architecture_variant: generic
+          compiler: clang
+          compiler_version: default
+          generator: ninjamulticonfig
+          generator_type: multiconfig
+          generator_cmake: Ninja Multi-Config
+          runner: ubuntu-24.04
+          c_compiler: clang
+          cpp_compiler: clang++
+        - execution_id: '6'
+          os: linux
+          os_version: ubuntu24.04
+          architecture: arm64
+          architecture_variant: generic
+          compiler: gcc
+          compiler_version: default
+          generator: ninja
+          generator_type: singleconfig
+          generator_cmake: Ninja
+          runner: ubuntu-24.04-arm
+          c_compiler: gcc
+          cpp_compiler: g++
+        - execution_id: '7'
+          os: linux
+          os_version: ubuntu24.04
+          architecture: arm64
+          architecture_variant: generic
+          compiler: clang
+          compiler_version: default
+          generator: ninja
+          generator_type: singleconfig
+          generator_cmake: Ninja
+          runner: ubuntu-24.04-arm
+          c_compiler: clang
+          cpp_compiler: clang++
+        - execution_id: '8'
+          os: windows
+          os_version: v10
+          architecture: x64
+          architecture_variant: generic
+          compiler: msvc
+          compiler_version: default
+          generator: msvc2022
+          generator_type: multiconfig
+          generator_cmake: Visual Studio 17 2022
+          runner: windows-2022
+        - execution_id: '9'
+          os: windows
+          os_version: v10
+          architecture: x64
+          architecture_variant: generic
+          compiler: msvc
+          compiler_version: default
+          generator: msvc2026
+          generator_type: multiconfig
+          generator_cmake: Visual Studio 18 2026
+          runner: windows-2025-vs2026
+        - execution_id: '10'
+          os: windows
+          os_version: v10
+          architecture: x64
+          architecture_variant: generic
+          compiler: msvcclang
+          compiler_version: default
+          generator: msvc2022
+          generator_type: multiconfig
+          generator_cmake: Visual Studio 17 2022
+          runner: windows-2022
+          toolset: ClangCL
+        - execution_id: '11'
+          os: windows
+          os_version: v10
+          architecture: x64
+          architecture_variant: generic
+          compiler: msvcclang
+          compiler_version: default
+          generator: msvc2026
+          generator_type: multiconfig
+          generator_cmake: Visual Studio 18 2026
+          runner: windows-2025-vs2026
+          toolset: ClangCL
     steps:
-      - name: csCMake Git clone/pull-ff
-        uses: actions/checkout@v6
-        with:
-          repository: cscosine/csCMake.git
-          path: workspace/csCMake
-          ref: dev
-          fetch-depth: 1
-          token: ${{ secrets.ACTIONS_ORG_ACCESS }}
-
-      - name: csCore Git clone/pull-ff
-        uses: actions/checkout@v6
-        with:
-          repository: cscosine/csCore.git
-          path: workspace/csCore
-          ref: dev
-          fetch-depth: 1
-          token: ${{ secrets.ACTIONS_ORG_ACCESS }}
-
-      - name: csLie Git clone/pull-ff
-        uses: actions/checkout@v6
-        with:
-          repository: cscosine/csLie.git
-          path: workspace/csLie
-          ref: dev
-          fetch-depth: 1
-          token: ${{ secrets.ACTIONS_ORG_ACCESS }}
-
-      - name: csCamera Git clone/pull-ff
-        uses: actions/checkout@v6
-        with:
-          repository: cscosine/csCamera.git
-          path: workspace/csCamera
-          ref: dev
-          fetch-depth: 1
-          token: ${{ secrets.ACTIONS_ORG_ACCESS }}
-
-      - name: csVisOpenGL Git clone/pull-ff
-        uses: actions/checkout@v6
-        with:
-          repository: cscosine/csVisOpenGL.git
-          path: workspace/csVisOpenGL
-          ref: dev
-          fetch-depth: 1
-          token: ${{ secrets.ACTIONS_ORG_ACCESS }}
-
-      - name: Run command install apt packages
-        if: ${{ matrix.os == 'linux' && startsWith(matrix.os_version, 'ubuntu') }}
-        shell: bash
-        run: |
-          set -euo pipefail # enable strict mode
-
-
-          packages=(
-            libgl1-mesa-dev
-            libopengl-dev
-            mesa-common-dev
-          )
-
-          missing=()
-
-          for pkg in "${packages[@]}"; do
-            dpkg -s "$pkg" &>/dev/null || missing+=("$pkg")
-          done
-
-          if [ ${#missing[@]} -ne 0 ]; then
-
-            sudo apt update
-
-            echo "Need to install missing packages: ${missing[*]}"
-            sudo apt install -y "${missing[@]}"
-          else
-            echo "All packages already installed."
-          fi
-
-      - name: Get Precompiled Lib pipes download tar.gz
-        uses: robinraju/release-downloader@v1.13
-        with:
-          repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.10
-          fileName: csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-pipes-0.0.1.tar.gz
-          out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-
-      - name: Get Precompiled Lib pipes extract tar.gz
-        shell: bash
-        run: |
-          tar -xzf workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-pipes-0.0.1.tar.gz -C workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-          rm -f workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-pipes-0.0.1.tar.gz
-
-      - name: Get Precompiled Lib tl-optional download tar.gz
-        uses: robinraju/release-downloader@v1.13
-        with:
-          repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.10
-          fileName: csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-tl-optional-1.0.0.tar.gz
-          out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-
-      - name: Get Precompiled Lib tl-optional extract tar.gz
-        shell: bash
-        run: |
-          tar -xzf workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-tl-optional-1.0.0.tar.gz -C workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-          rm -f workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-tl-optional-1.0.0.tar.gz
-
-      - name: Get Precompiled Lib tl-expected download tar.gz
-        uses: robinraju/release-downloader@v1.13
-        with:
-          repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.10
-          fileName: csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-tl-expected-1.2.0.tar.gz
-          out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-
-      - name: Get Precompiled Lib tl-expected extract tar.gz
-        shell: bash
-        run: |
-          tar -xzf workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-tl-expected-1.2.0.tar.gz -C workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-          rm -f workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-tl-expected-1.2.0.tar.gz
-
-      - name: Get Precompiled Lib fmt-eigen download tar.gz
-        uses: robinraju/release-downloader@v1.13
-        with:
-          repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.10
-          fileName: csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-fmt-eigen-1.0.0.tar.gz
-          out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-
-      - name: Get Precompiled Lib fmt-eigen extract tar.gz
-        shell: bash
-        run: |
-          tar -xzf workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-fmt-eigen-1.0.0.tar.gz -C workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-          rm -f workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-fmt-eigen-1.0.0.tar.gz
-
-      - name: Get Precompiled Lib tclap download tar.gz
-        uses: robinraju/release-downloader@v1.13
-        with:
-          repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.10
-          fileName: csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-tclap-1.0.0.tar.gz
-          out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-
-      - name: Get Precompiled Lib tclap extract tar.gz
-        shell: bash
-        run: |
-          tar -xzf workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-tclap-1.0.0.tar.gz -C workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-          rm -f workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-tclap-1.0.0.tar.gz
-
-      - name: Get Precompiled Lib cpptrace download tar.gz
-        uses: robinraju/release-downloader@v1.13
-        with:
-          repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.10
-          fileName: csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-cpptrace-0.8.3.tar.gz
-          out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-
-      - name: Get Precompiled Lib cpptrace extract tar.gz
-        shell: bash
-        run: |
-          tar -xzf workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-cpptrace-0.8.3.tar.gz -C workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-          rm -f workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-cpptrace-0.8.3.tar.gz
-
-      - name: Get Precompiled Lib eigen3 download tar.gz
-        uses: robinraju/release-downloader@v1.13
-        with:
-          repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.10
-          fileName: csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-eigen3-3.4.0.tar.gz
-          out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-
-      - name: Get Precompiled Lib eigen3 extract tar.gz
-        shell: bash
-        run: |
-          tar -xzf workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-eigen3-3.4.0.tar.gz -C workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-          rm -f workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-eigen3-3.4.0.tar.gz
-
-      - name: Get Precompiled Lib libassert download tar.gz
-        uses: robinraju/release-downloader@v1.13
-        with:
-          repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.10
-          fileName: csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-libassert-2.1.5.tar.gz
-          out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-
-      - name: Get Precompiled Lib libassert extract tar.gz
-        shell: bash
-        run: |
-          tar -xzf workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-libassert-2.1.5.tar.gz -C workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-          rm -f workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-libassert-2.1.5.tar.gz
-
-      - name: Get Precompiled Lib fmt download tar.gz
-        uses: robinraju/release-downloader@v1.13
-        with:
-          repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.10
-          fileName: csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-fmt-11.2.1.tar.gz
-          out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-
-      - name: Get Precompiled Lib fmt extract tar.gz
-        shell: bash
-        run: |
-          tar -xzf workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-fmt-11.2.1.tar.gz -C workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-          rm -f workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-fmt-11.2.1.tar.gz
-
-      - name: Get Precompiled Lib magic_enum download tar.gz
-        uses: robinraju/release-downloader@v1.13
-        with:
-          repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.10
-          fileName: csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-magic_enum-0.9.7.tar.gz
-          out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-
-      - name: Get Precompiled Lib magic_enum extract tar.gz
-        shell: bash
-        run: |
-          tar -xzf workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-magic_enum-0.9.7.tar.gz -C workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-          rm -f workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-magic_enum-0.9.7.tar.gz
-
-      - name: Get Precompiled Lib Catch2 download tar.gz
-        uses: robinraju/release-downloader@v1.13
-        with:
-          repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.10
-          fileName: csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-Catch2-3.10.0.tar.gz
-          out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-
-      - name: Get Precompiled Lib Catch2 extract tar.gz
-        shell: bash
-        run: |
-          tar -xzf workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-Catch2-3.10.0.tar.gz -C workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-          rm -f workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-Catch2-3.10.0.tar.gz
-
-      - name: Get Precompiled Lib NamedType download tar.gz
-        uses: robinraju/release-downloader@v1.13
-        with:
-          repository: cscosine/3rdPartyBaseLibs
-          tag: v0.1.10
-          fileName: csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-NamedType-1.1.0.tar.gz
-          out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-
-      - name: Get Precompiled Lib NamedType extract tar.gz
-        shell: bash
-        run: |
-          tar -xzf workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-NamedType-1.1.0.tar.gz -C workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-          rm -f workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-NamedType-1.1.0.tar.gz
-
-      - name: Get Precompiled Lib qt6 prepare filename
-        id: filename_csQt6_qt6
-        shell: python
-        run: |
-          import os
-          import sys
-
-          execution_id = int("${{ matrix.execution_id }}")
-
-          filenames = {
-              0: "csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninja",
-              1: "csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninja",
-              2: "csv1-linux-ubuntu22.04-arm64-generic-gcc-default-ninja",
-              3: "csv1-linux-ubuntu22.04-arm64-generic-gcc-default-ninja",
-              4: "csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninja",
-              5: "csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninja",
-              6: "csv1-linux-ubuntu24.04-arm64-generic-gcc-default-ninja",
-              7: "csv1-linux-ubuntu24.04-arm64-generic-gcc-default-ninja",
-              8: "csv1-windows-v10-x64-generic-msvc-msvc_2022_17-ninja",
-              9: "csv1-windows-v10-x64-generic-msvc-msvc_2022_17-ninja",
-              10: "csv1-windows-v10-x64-generic-msvc-msvc_2022_17-ninja",
-              11: "csv1-windows-v10-x64-generic-msvc-msvc_2022_17-ninja",
-          }
-
-          if execution_id not in filenames:
-              print("Unsupported matrix entry")
-              sys.exit(1)
-
-          filename = filenames[execution_id] + '-qt6-v6.11.1.tar.gz'
-
-          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-              f.write(f"filename_csQt6_qt6={filename}\n")
-
-      - name: Get Precompiled Lib qt6 download tar.gz
-        uses: robinraju/release-downloader@v1.13
-        with:
-          repository: cscosine/csQt6
-          tag: v6.11.1
-          fileName: ${{ steps.filename_csQt6_qt6.outputs.filename_csQt6_qt6 }}
-          out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-
-      - name: Get Precompiled Lib qt6 extract tar.gz
-        shell: bash
-        run: |
-          tar -xzf workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/${{ steps.filename_csQt6_qt6.outputs.filename_csQt6_qt6 }} -C workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-          rm -f workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/${{ steps.filename_csQt6_qt6.outputs.filename_csQt6_qt6 }}
-
-      - name: cmake workflow on csCore CMake Workflow for config(s) debug-release-relWithDebInfo-paranoid
-        shell: bash
-        run: |
-          set -e
-          if [[ "${{ matrix.generator_type }}" == "singleconfig" ]]; then
-            cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-debug
-            cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-release
-            cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-relWithDebInfo
-            cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-paranoid
-          elif [[ "${{ matrix.generator_type }}" == "multiconfig" ]]; then
-            cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-debug-release-relWithDebInfo-paranoid
-          else
-            echo "Unknown generator_type: ${{ matrix.generator_type }}"
-            exit 1
-          fi
-        working-directory: workspace/csCore
-
-      - name: cmake workflow on csLie CMake Workflow for config(s) debug-release-relWithDebInfo-paranoid
-        shell: bash
-        run: |
-          set -e
-          if [[ "${{ matrix.generator_type }}" == "singleconfig" ]]; then
-            cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-debug
-            cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-release
-            cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-relWithDebInfo
-            cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-paranoid
-          elif [[ "${{ matrix.generator_type }}" == "multiconfig" ]]; then
-            cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-debug-release-relWithDebInfo-paranoid
-          else
-            echo "Unknown generator_type: ${{ matrix.generator_type }}"
-            exit 1
-          fi
-        working-directory: workspace/csLie
-
-      - name: cmake workflow on csCamera CMake Workflow for config(s) debug-release-relWithDebInfo-paranoid
-        shell: bash
-        run: |
-          set -e
-          if [[ "${{ matrix.generator_type }}" == "singleconfig" ]]; then
-            cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-debug
-            cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-release
-            cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-relWithDebInfo
-            cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-paranoid
-          elif [[ "${{ matrix.generator_type }}" == "multiconfig" ]]; then
-            cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-debug-release-relWithDebInfo-paranoid
-          else
-            echo "Unknown generator_type: ${{ matrix.generator_type }}"
-            exit 1
-          fi
-        working-directory: workspace/csCamera
-
-      - name: cmake workflow on csVisOpenGL CMake Workflow for config(s) debug-release-relWithDebInfo-paranoid
-        shell: bash
-        run: |
-          set -e
-          if [[ "${{ matrix.generator_type }}" == "singleconfig" ]]; then
-            cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-debug
-            cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-release
-            cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-relWithDebInfo
-            cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-paranoid
-          elif [[ "${{ matrix.generator_type }}" == "multiconfig" ]]; then
-            cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-debug-release-relWithDebInfo-paranoid
-          else
-            echo "Unknown generator_type: ${{ matrix.generator_type }}"
-            exit 1
-          fi
-        working-directory: workspace/csVisOpenGL
-
-      - name: Get Versions
-        shell: python
-        run: |
-          from pathlib import Path
-          import re
-          import json
-          import sys
-          import os
-          from dataclasses import dataclass, field
-
-          @dataclass(frozen=True)
-          class CMakeConfigPackageVersionGrep:
-              name: str
-              version_file: Path
-
-          @dataclass(frozen=True)
-          class CMakeConfigPackageVersion:
-              name: str
-              version: str
-
-          @dataclass
-          class VersionSearchOutput:
-              versions: list[CMakeConfigPackageVersion] = field(default_factory=list)
-              errors: list[str] = field(default_factory=list)
-
-          def grep_package_version(filename: Path) -> tuple[str | None, str | None]:
-              path = filename
-
-              if not path.is_file():
-                  return (None, f"ERROR: file not found: {path}")
-
-              content = path.read_text(encoding="utf-8")
-
-              matches = []
-
-              for m in re.finditer(
-                  r'set\s*\(\s*PACKAGE_VERSION\s+("([^"]*)"|([^\s\)]+))\s*\)',
-                  content,
-              ):
-                  value = m.group(2) or m.group(3)
-
-                  # Ignore computed values like "${PACKAGE_VERSION} (...)"
-                  if "${" in value:
-                      continue
-
-                  matches.append(value)
-
-              if len(matches) != 1:
-                  return (None, f"ERROR: {path}: expected exactly one PACKAGE_VERSION definition, found {len(matches)}")
-
-              version = matches[0]
-              return (version, None)
-
-          def find_cmake_config_version(search_path: Path, name: str) -> tuple[Path | None, str | None]:
-              candidates = {
-                  f"{name}-config-version.cmake".lower(),
-                  f"{name}ConfigVersion.cmake".lower(),
-              }
-
-              matches = [p for p in search_path.rglob("*") if p.is_file() and p.name.lower() in candidates]
-
-              if not matches:
-                  return (None, f"No config version file found for '{name}' under '{search_path}'")
-
-              if len(matches) > 1:
-                  return (None, "Multiple config version files found:" + ", ".join(str(p) for p in matches))
-
-              return (matches[0], None)
-
-          def get_versions_helper(
-              repos_config_file_list: list[CMakeConfigPackageVersionGrep],  # pairs of repo and files reporting versions
-              repos_auto_search_list: list[str],  # repo name only
-              repos_version: list[CMakeConfigPackageVersion],  # pairs of repo and versions
-              base_install_dir: Path,
-              install_subdir: Path,
-              base_folder_path: Path | None,
-          ) -> VersionSearchOutput:
-              result = VersionSearchOutput()
-
-              # fixed versions
-              for repo_v in repos_version:
-                  result.versions.append(CMakeConfigPackageVersion(name=repo_v.name, version=repo_v.version))
-
-              # repo with version with file hint
-              for repo in repos_config_file_list:
-                  if base_folder_path is not None:
-                      target_full_path = base_folder_path / base_install_dir / install_subdir / repo.version_file
-                  else:
-                      target_full_path = base_install_dir / install_subdir / repo.version_file
-
-                  version_or_err = grep_package_version(target_full_path)
-
-                  if version_or_err[1] is not None:
-                      result.errors.append(version_or_err[1])
-
-                  else:
-                      assert version_or_err[0] is not None
-                      version = version_or_err[0]
-                      result.versions.append(CMakeConfigPackageVersion(name=repo.name, version=version))
-
-              # repo with version autosearch
-              for name in repos_auto_search_list:
-                  if base_folder_path is not None:
-                      search_path = base_folder_path / base_install_dir / install_subdir / name
-                  else:
-                      search_path = base_install_dir / install_subdir / name
-                  path_or_err = find_cmake_config_version(search_path=search_path, name=name)
-                  if path_or_err[1] is not None:
-                      result.errors.append(path_or_err[1])
-
-                  else:
-                      assert path_or_err[0] is not None
-                      path = path_or_err[0]
-
-                      version_or_err = grep_package_version(path)
-
-                      if version_or_err[1] is not None:
-                          result.errors.append(version_or_err[1])
-
-                      else:
-                          assert version_or_err[0] is not None
-                          version = version_or_err[0]
-                          result.versions.append(CMakeConfigPackageVersion(name=name, version=version))
-
-              return result
-
-          def write_version_file(dest: Path, src: list[CMakeConfigPackageVersion]) -> None:
-              ret = []
-              for pv in src:
-                  ret.append({"name": pv.name, "version": pv.version})
-
-              with open(dest, "w", encoding="utf-8") as f:
-                  json.dump(ret, f, indent=4, ensure_ascii=False)
-
-          repos_config_file_list : list[CMakeConfigPackageVersionGrep] = []
-
-          repos_auto_search_list : list[str] = [
-              'csCore',
-              'csLie',
-              'csCamera',
-              'csVisOpenGL',
-          ]
-
-          repos_version: list[CMakeConfigPackageVersion] = []
-
-          result = get_versions_helper(
-              repos_config_file_list,
-              repos_auto_search_list,
-              repos_version,
-              Path('workspace/install'),
-              Path('csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}'),
-              None
-          )
-          if len(result.errors) > 0:
-              for e in result.errors:
-                  print(e)
-              sys.exit('ERROR: getting package versions')
-
-          output_file = (
-              Path('workspace/install')
-              / Path('csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}.csOrchestratorVersion')
-          )
-
-          write_version_file(output_file, result.versions)
-
-
-      - name: Create Archives
-        shell: python
-        run: |
-          import json
-          import os
-          import sys
-          import tarfile
-          from dataclasses import dataclass
-          from pathlib import Path
-
-          @dataclass(frozen=True)
-          class CMakeConfigPackageVersion:
-              name: str
-              version: str
-
-          def load_version_file(src: Path) -> list[CMakeConfigPackageVersion]:
-              packages = []
-              with open(src, encoding="utf-8") as f:
-                  packages = json.load(f)
-
-              # TODO make robust to errors
-              ret: list[CMakeConfigPackageVersion] = []
-              for item in packages:
-                  name = item["name"]
-                  version = item["version"]
-                  ret.append(CMakeConfigPackageVersion(name, version))
-
-              return ret
-
-
-          packages = load_version_file('workspace/install/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}.csOrchestratorVersion')
-
-          if packages is None:
-              sys.exit('packages was not loaded')
-
-          for item in packages:
-              install_subdir = Path('workspace/install/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}').resolve()
-              source_path = Path(install_subdir / Path(item.name)).resolve()
-              output_path = Path(install_subdir / Path('csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}' + '-' + item.name + '-' + item.version + '.tar.gz')).resolve()
-
-              with tarfile.open(output_path, 'w:gz') as tar:
-                  for path in source_path.rglob('*'):
-                      resolved_path = path.resolve()
-                      arcname = path.resolve().relative_to(install_subdir)
-                      tar.add(resolved_path, arcname=arcname)
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v7
-        with:
-          name: csBaseLibs-0.1.0-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-          path: |
-            workspace/install/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/*.tar.gz
-            workspace/install/*.csOrchestratorVersion
+    - name: Repo git self-checkout
+      uses: actions/checkout@v6
+    - name: csCMake Git clone/pull-ff
+      uses: actions/checkout@v6
+      with:
+        repository: cscosine/csCMake.git
+        path: workspace/csCMake
+        ref: dev
+        fetch-depth: '1'
+        token: ${{ secrets.ACTIONS_ORG_ACCESS }}
+    - name: csCore Git clone/pull-ff
+      uses: actions/checkout@v6
+      with:
+        repository: cscosine/csCore.git
+        path: workspace/csCore
+        ref: dev
+        fetch-depth: '1'
+        token: ${{ secrets.ACTIONS_ORG_ACCESS }}
+    - name: csLie Git clone/pull-ff
+      uses: actions/checkout@v6
+      with:
+        repository: cscosine/csLie.git
+        path: workspace/csLie
+        ref: dev
+        fetch-depth: '1'
+        token: ${{ secrets.ACTIONS_ORG_ACCESS }}
+    - name: csCamera Git clone/pull-ff
+      uses: actions/checkout@v6
+      with:
+        repository: cscosine/csCamera.git
+        path: workspace/csCamera
+        ref: dev
+        fetch-depth: '1'
+        token: ${{ secrets.ACTIONS_ORG_ACCESS }}
+    - name: csVisOpenGL Git clone/pull-ff
+      uses: actions/checkout@v6
+      with:
+        repository: cscosine/csVisOpenGL.git
+        path: workspace/csVisOpenGL
+        ref: dev
+        fetch-depth: '1'
+        token: ${{ secrets.ACTIONS_ORG_ACCESS }}
+    - name: Run command install apt packages
+      run: |-
+        set -euo pipefail # enable strict mode
+
+
+        packages=(
+          libgl1-mesa-dev
+          libopengl-dev
+          mesa-common-dev
+        )
+
+        missing=()
+
+        for pkg in "${packages[@]}"; do
+          dpkg -s "$pkg" &>/dev/null || missing+=("$pkg")
+        done
+
+        if [ ${#missing[@]} -ne 0 ]; then
+
+          sudo apt update
+
+          echo "Need to install missing packages: ${missing[*]}"
+          sudo apt install -y "${missing[@]}"
+        else
+          echo "All packages already installed."
+        fi
+      if: ${{ matrix.os == 'linux' && startsWith(matrix.os_version, 'ubuntu') }}
+      shell: bash
+    - name: cmake workflow on csCore CMake Workflow for config(s) debug-release-relWithDebInfo-paranoid
+      run: |-
+        set -e
+        if [[ "${{ matrix.generator_type }}" == "singleconfig" ]]; then
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-debug
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-release
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-relWithDebInfo
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-paranoid
+        elif [[ "${{ matrix.generator_type }}" == "multiconfig" ]]; then
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-debug-release-relWithDebInfo-paranoid
+        else
+          echo "Unknown generator_type: ${{ matrix.generator_type }}"
+          exit 1
+        fi
+      shell: bash
+      working-directory: workspace/csCore
+    - name: cmake workflow on csLie CMake Workflow for config(s) debug-release-relWithDebInfo-paranoid
+      run: |-
+        set -e
+        if [[ "${{ matrix.generator_type }}" == "singleconfig" ]]; then
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-debug
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-release
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-relWithDebInfo
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-paranoid
+        elif [[ "${{ matrix.generator_type }}" == "multiconfig" ]]; then
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-debug-release-relWithDebInfo-paranoid
+        else
+          echo "Unknown generator_type: ${{ matrix.generator_type }}"
+          exit 1
+        fi
+      shell: bash
+      working-directory: workspace/csLie
+    - name: cmake workflow on csCamera CMake Workflow for config(s) debug-release-relWithDebInfo-paranoid
+      run: |-
+        set -e
+        if [[ "${{ matrix.generator_type }}" == "singleconfig" ]]; then
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-debug
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-release
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-relWithDebInfo
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-paranoid
+        elif [[ "${{ matrix.generator_type }}" == "multiconfig" ]]; then
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-debug-release-relWithDebInfo-paranoid
+        else
+          echo "Unknown generator_type: ${{ matrix.generator_type }}"
+          exit 1
+        fi
+      shell: bash
+      working-directory: workspace/csCamera
+    - name: cmake workflow on csVisOpenGL CMake Workflow for config(s) debug-release-relWithDebInfo-paranoid
+      run: |-
+        set -e
+        if [[ "${{ matrix.generator_type }}" == "singleconfig" ]]; then
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-debug
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-release
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-relWithDebInfo
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-paranoid
+        elif [[ "${{ matrix.generator_type }}" == "multiconfig" ]]; then
+          cmake --workflow workflow-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-debug-release-relWithDebInfo-paranoid
+        else
+          echo "Unknown generator_type: ${{ matrix.generator_type }}"
+          exit 1
+        fi
+      shell: bash
+      working-directory: workspace/csVisOpenGL
+    - name: Get Versions
+      run: |-
+        import sys
+        from pathlib import Path
+        from typing import cast
+
+        from csorchestratorsdk.portable.package_version import CMakeConfigPackageVersionGrep, PackageVersion
+        from csorchestratorsdk.portable.release_manifest import get_package_versions_and_write_single_variant_manifest
+
+        repos_config_file_list = []
+        repos_auto_search_list = ['csCore', 'csLie', 'csCamera', 'csVisOpenGL']
+        repos_version = []
+        base_install_dir = Path('workspace/install')
+        install_subdir = Path('csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}')
+        variant_string = 'csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}'
+        project_name = 'csBaseLibs'
+        project_version = '0.1.0'
+        output_file = Path('workspace/install/csBaseLibs-0.1.0-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}.csOrchestratorManifest')
+
+        errors_list = get_package_versions_and_write_single_variant_manifest(
+            repos_config_file_list=repos_config_file_list,
+            repos_auto_search_list=repos_auto_search_list,
+            repos_version=repos_version,
+            base_install_dir=base_install_dir,
+            install_subdir=install_subdir,
+            variant_string=variant_string,
+            project_name=project_name,
+            project_version=project_version,
+            output_file=output_file,
+        )
+
+        if len(errors_list) > 0:
+            for e in errors_list:
+                print(e)
+            sys.exit("ERROR: getting package versions")
+      shell: python
+      env:
+        PYTHONPATH: ${{ github.workspace }}
+    - name: Create Archives
+      run: |-
+        import sys
+        from pathlib import Path
+        from typing import cast
+
+        from csorchestratorsdk.portable.release_manifest import (
+            load_release_manifest_single_variant_and_prepare_archive,
+        )
+
+        input_full_path = Path('workspace/install/csBaseLibs-0.1.0-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}.csOrchestratorManifest')
+        project_name_and_version = 'csBaseLibs-0.1.0'
+        context_os_architecture_compiler_generator_string = 'csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}'
+        input_base_dir = Path('workspace/install')
+
+        errors_list = load_release_manifest_single_variant_and_prepare_archive(
+            input_full_path=input_full_path,
+            project_name_and_version=project_name_and_version,
+            context_os_architecture_compiler_generator_string=context_os_architecture_compiler_generator_string,
+            input_base_dir=input_base_dir.resolve(),
+        )
+
+        if len(errors_list) > 0:
+            for e in errors_list:
+                print(e)
+            sys.exit("ERROR: getting package versions")
+      shell: python
+      env:
+        PYTHONPATH: ${{ github.workspace }}
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v7
+      with:
+        name: csBaseLibs-0.1.0-csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
+        path: |-
+          workspace/install/*.tar.gz
+          workspace/install/*.csOrchestratorManifest
