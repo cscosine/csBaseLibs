@@ -1,0 +1,58 @@
+{
+  "csOrchestratorManifest": {
+    "additional_files": [
+      "csQt6/cs_orchestrator_config.py"
+    ],
+    "manifest_version": "1.0",
+    "output_bundle_file_name": "Qt6-v6.11.1-bundle.tar.gz",
+    "project_name": "Qt6",
+    "project_version": "__PROJECT_VERSION__",
+    "variants": [
+      {
+        "entries": [
+          {
+            "name": "qt6",
+            "version": "v6.11.1"
+          }
+        ],
+        "variant": "csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninja"
+      },
+      {
+        "entries": [
+          {
+            "name": "qt6",
+            "version": "v6.11.1"
+          }
+        ],
+        "variant": "csv1-linux-ubuntu22.04-arm64-generic-gcc-default-ninja"
+      },
+      {
+        "entries": [
+          {
+            "name": "qt6",
+            "version": "v6.11.1"
+          }
+        ],
+        "variant": "csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninja"
+      },
+      {
+        "entries": [
+          {
+            "name": "qt6",
+            "version": "v6.11.1"
+          }
+        ],
+        "variant": "csv1-linux-ubuntu24.04-arm64-generic-gcc-default-ninja"
+      },
+      {
+        "entries": [
+          {
+            "name": "qt6",
+            "version": "v6.11.1"
+          }
+        ],
+        "variant": "csv1-windows-v10-x64-generic-msvc-msvc_2022_17-ninja"
+      }
+    ]
+  }
+}

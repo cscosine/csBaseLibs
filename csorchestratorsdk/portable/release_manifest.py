@@ -190,7 +190,11 @@ def load_release_manifest_single_variant_and_prepare_archive(
         with tarfile.open(output_path, "w:gz") as tar:
             for path in input_path.rglob("*"):
                 resolved_path = path.resolve()
-                arcname = path.resolve().relative_to(input_base_dir)
+                # make the archive self-contained: entries start directly with the
+                # lib folder (e.g. "libassert/include/..."), not with the variant
+                # folder, so that extracting into workspace/libs/<variant> makes the
+                # package findable via CMAKE_PREFIX_PATH=<workspace>/libs/<variant>
+                arcname = path.resolve().relative_to(input_path.parent)
                 tar.add(resolved_path, arcname=arcname)
 
     return []
