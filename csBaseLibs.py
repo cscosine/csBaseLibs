@@ -14,16 +14,11 @@ from csorchestrator.application.recipes.create_orchestrator import create_defaul
 from csorchestrator.application.recipes.manifest_github import (
     download_csorchestrator_managed_libraries,
 )
-from csorchestrator.domain.context.context_os_architecture import OS, UBUNTU_STRING_PREFIX
 from csorchestrator.foundation.core.report import Report
 from csorchestrator.frontend.cscmake_presets.supported_variants import BuildConfig
-from csorchestrator.frontend.local_execution.step_utils import (
-    StepExecuteOnlyOn,
-    StepExecuteOnlyOncePerMatrix,
-)
-from csorchestrator.frontend.step.step_custom_command import StepInstallAptPackages
 from csorchestrator.frontend.step.step_get_precompiled_lib_github import StepGetPrecompiledLibGithub
 
+from csBaseLibs.cs_orchestrator_config import install_requirements
 from libs.csQt6.cs_orchestrator_config import qt6_mapping
 
 
@@ -59,28 +54,11 @@ def create_orchestrator() -> OptionalOrchestratorWithReport:
     )
 
     # ----------------------------------------------------------------
-    p = o.create_phase("Install Requirements (Linux-Ubuntu)")
-    p.add_step(
-        StepInstallAptPackages(
-            name="install apt packages",
-            description="install apt packages if not already installed in the system",
-            packages=[
-                "libgl1-mesa-dev",
-                "libopengl-dev",
-                "mesa-common-dev",
-            ],
-            dry_run=False,
-        )
-        .add_extra(StepExecuteOnlyOncePerMatrix())
-        .add_extra(StepExecuteOnlyOn(os=OS.LINUX, version_starts_with=UBUNTU_STRING_PREFIX))
-    )
+    install_requirements(o)
 
     # ----------------------------------------------------------------
     # Get Precompiled Libraries
     #
-    # TODO: download the precompiled qt6 (toolchain mapping will come
-    # automatically from the csQt6 download); `csBaseLibs/cs_orchestrator_config.py`
-    # is intentionally an empty placeholder for now.
 
     report.append_report(
         download_csorchestrator_managed_libraries(

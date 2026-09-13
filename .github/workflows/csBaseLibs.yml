@@ -457,17 +457,49 @@ jobs:
         tar -xzf workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-tl-optional-1.0.0.tar.gz -C workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
         rm -f workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-tl-optional-1.0.0.tar.gz
       shell: bash
+    - name: Get Precompiled Lib qt6 prepare filename
+      run: |-
+        import os
+        import sys
+
+        execution_id = int("${{ matrix.execution_id }}")
+
+        filenames = {
+            0: "csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninja",
+            1: "csv1-linux-ubuntu22.04-x64-generic-gcc-default-ninja",
+            2: "csv1-linux-ubuntu22.04-arm64-generic-gcc-default-ninja",
+            3: "csv1-linux-ubuntu22.04-arm64-generic-gcc-default-ninja",
+            4: "csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninja",
+            5: "csv1-linux-ubuntu24.04-x64-generic-gcc-default-ninja",
+            6: "csv1-linux-ubuntu24.04-arm64-generic-gcc-default-ninja",
+            7: "csv1-linux-ubuntu24.04-arm64-generic-gcc-default-ninja",
+            8: "csv1-windows-v10-x64-generic-msvc-msvc_2022_17-ninja",
+            9: "csv1-windows-v10-x64-generic-msvc-msvc_2022_17-ninja",
+            10: "csv1-windows-v10-x64-generic-msvc-msvc_2022_17-ninja",
+            11: "csv1-windows-v10-x64-generic-msvc-msvc_2022_17-ninja",
+        }
+
+        if execution_id not in filenames:
+            print("Unsupported matrix entry")
+            sys.exit(1)
+
+        filename = filenames[execution_id] + '-qt6-v6.11.1.tar.gz'
+
+        with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+            f.write(f"filename_Qt6_qt6={filename}\n")
+      id: filename_Qt6_qt6
+      shell: python
     - name: Get Precompiled Lib qt6 download tar.gz
       uses: robinraju/release-downloader@v1.13
       with:
         repository: cscosine/csQt6
         tag: vX.X.X
-        fileName: csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-qt6-v6.11.1.tar.gz
+        fileName: ${{ steps.filename_Qt6_qt6.outputs.filename_Qt6_qt6 }}
         out-file-path: workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
     - name: Get Precompiled Lib qt6 extract tar.gz
       run: |-
-        tar -xzf workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-qt6-v6.11.1.tar.gz -C workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
-        rm -f workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}-qt6-v6.11.1.tar.gz
+        tar -xzf workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/${{ steps.filename_Qt6_qt6.outputs.filename_Qt6_qt6 }} -C workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}
+        rm -f workspace/libs/csv1-${{ matrix.os }}-${{ matrix.os_version }}-${{ matrix.architecture }}-${{ matrix.architecture_variant }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.generator }}/${{ steps.filename_Qt6_qt6.outputs.filename_Qt6_qt6 }}
       shell: bash
     - name: cmake workflow on csCore CMake Workflow for config(s) debug-release-relWithDebInfo-paranoid
       run: |-
