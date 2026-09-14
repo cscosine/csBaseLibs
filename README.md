@@ -92,19 +92,22 @@ The project version (`0.1.0`) is defined both in [`csBaseLibs.py`](csBaseLibs.py
 
 1. **Repos Self Checkout & Update**:
    - Performs a shallow (`depth=1`) self-checkout of this repository so release assembly runs on the runner.
-2. **Checkout & Build each library**: for every repository configured in [`csBaseLibs.py`](csBaseLibs.py):
-   - Clones or pulls the repository into `workspace/<repo>` at the configured ref (usually `dev`).
-   - Configures, builds, and installs the library into `workspace/install/<variant>/<repo>` using the per-repository `BuildConfig` (e.g. `DEBUG_RELEASE_RELWITHDEBINFO_PARANOID`).
+2. **Checkout Repositories**: for every repository configured in [`csBaseLibs.py`](csBaseLibs.py):
+   - Clones or pulls the repositories (`csCMake`, `csCore`, `csLie`, `csCamera`, `csVisOpenGL`) into `workspace/<repo>` at the configured ref (usually `dev`).
 3. **Install Requirements (Linux-Ubuntu)**:
    - Installs the OpenGL system packages required by the GUI libraries (`libgl1-mesa-dev`, `libopengl-dev`, `mesa-common-dev`).
-4. **Get Versions**:
+4. **Get Precompiled Libraries**:
+   - Downloads the **precompiled third-party libraries** (Catch2, cpptrace, eigen3, fmt, fmt-eigen, libassert, magic_enum, NamedType, pipes, tclap, tl-expected, tl-optional) from the [`3rdPartyBaseLibs`](https://github.com/cscosine/3rdPartyBaseLibs) release and the **Qt6 GUI toolkit** from the [`csQt6`](https://github.com/cscosine/csQt6) release into `workspace/libs/<variant>`.
+   - The full list of precompiled packages and their versions is in the [Dependencies](#dependencies) section.
+   - Qt6 archives are mapped onto the build variants (Linux → GCC / Ninja, Windows → MSVC 2022 / Ninja).
+5. **Build each library**:
+   - Configures, builds, and installs each repository into `workspace/install/<variant>/<repo>` using the per-repository `BuildConfig` (e.g. `DEBUG_RELEASE_RELWITHDEBINFO_PARANOID`).
+6. **Get Versions**:
    - Reads each installed library's package version (CMakeConfig package) and writes a per-variant `.csOrchestratorManifest`.
-5. **Create Archives**:
+7. **Create Archives**:
    - Packages the installed outputs into per-variant `.tar.gz` archives together with the matching manifest.
-6. **Artifacts & Release Bundling**:
+8. **Artifacts & Release Bundling**:
    - Uploads per-variant artifacts, then `release-from-artifacts` merges them into a single `csBaseLibs-<version>.csOrchestratorManifest` and `csBaseLibs-<version>-bundle.tar.gz` for the GitHub Release.
-
-> **Note — Precompiled libraries**: the "Get Precompiled Libraries" phase (3rdPartyBaseLibs + csQt6) is currently **disabled** because the old `create_steps_to_get_libs_from_manifest` helper has been removed from `csOrchestrator`. The section is kept as a commented-out TODO block in [`csBaseLibs.py`](csBaseLibs.py). `csBaseLibs/cs_orchestrator_config.py` stays an empty placeholder for now; the qt6 toolchain mapping will come automatically from the csQt6 download.
 
 ### Included Libraries
 
@@ -115,6 +118,115 @@ The project version (`0.1.0`) is defined both in [`csBaseLibs.py`](csBaseLibs.py
 | csLie | `DEBUG_RELEASE_RELWITHDEBINFO_PARANOID` |
 | csCamera | `DEBUG_RELEASE_RELWITHDEBINFO_PARANOID` |
 | csVisOpenGL | `DEBUG_RELEASE_RELWITHDEBINFO_PARANOID` |
+
+### Dependencies
+
+`csBaseLibs` builds all **first-party** libraries (csCore, csLie, csCamera, csVisOpenGL) **from source** and consumes the following precompiled external dependencies:
+
+- **3rdPartyBaseLibs** — precompiled third-party libraries from its [GitHub release](https://github.com/cscosine/3rdPartyBaseLibs):
+  - Catch2
+  - cpptrace
+  - eigen3
+  - fmt
+  - fmt-eigen
+  - libassert
+  - magic_enum
+  - NamedType
+  - pipes
+  - tclap
+  - tl-expected
+  - tl-optional
+- **Qt6** — precompiled GUI toolkit from [csQt6](https://github.com/cscosine/csQt6).
+- **OpenGL** — Linux system packages (`libgl1-mesa-dev`, `libopengl-dev`, `mesa-common-dev`); required by the GUI libraries and therefore only for `csBaseLibs`.
+
+### Library Dependency Graph
+
+The graph below captures the **actual compile / link-time dependencies** between the first-party
+libraries built here and their precompiled dependencies, derived from each repository's
+`CMakeLists.txt` and the installed CMake package configs (`*Config.cmake` / `*Targets.cmake`)
+produced by the build.
+
+```mermaid
+%%{init: {"flowchart": {"curve": "basis"}} }%%
+graph TD
+    %% Edge convention: A --> B  ⇒  "A depends on B"
+    %% Solid arrow   = compile / link-time dependency
+    %% Dotted arrow  = test-only dependency
+
+    classDef consumer fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
+    classDef leaf    fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+
+    subgraph first_party["First-party libraries (built from source)"]
+        csCore["csCore"]
+        csLie["csLie"]
+        csCamera["csCamera"]
+        csVisOpenGL["csVisOpenGL"]
+    end
+
+    subgraph precompiled["Precompiled dependencies (3rdPartyBaseLibs release vX.X.X)"]
+        eigen3["eigen3"]
+        fmt["fmt"]
+        fmt_eigen["fmt-eigen"]
+        libassert["libassert"]
+        cpptrace["cpptrace"]
+        pipes["pipes"]
+        tl_optional["tl-optional"]
+        tl_expected["tl-expected"]
+        namedtype["NamedType"]
+        catch2["Catch2"]
+    end
+
+    subgraph gui_system["Qt6 GUI toolkit & system packages"]
+        qt6["Qt6 v6.11.1 (csQt6 release vX.X.X)"]
+        opengl["OpenGL (Linux system packages)"]
+    end
+
+    csLie --> csCore
+    csCamera --> csCore
+    csVisOpenGL --> csCore
+
+    csLie --> eigen3
+    csCamera --> eigen3
+    csVisOpenGL --> eigen3
+
+    csVisOpenGL --> qt6
+    csVisOpenGL --> opengl
+
+    csCore --> fmt
+    csCore --> fmt_eigen
+    csCore --> eigen3
+    csCore --> libassert
+    csCore --> tl_optional
+    csCore --> tl_expected
+    csCore --> pipes
+    csCore --> namedtype
+
+    csCore   -. "tests only" .-> catch2
+    csLie    -. "tests only" .-> catch2
+    csCamera -. "tests only" .-> catch2
+
+    %% dependencies internal to the precompiled 3rdPartyBaseLibs package
+    %% (kept for completeness; see the 3rdPartyBaseLibs README for details)
+    fmt_eigen --> eigen3
+    fmt_eigen --> fmt
+    libassert --> cpptrace
+
+    %% invisible links force each group onto its own row (strict vertical layout)
+    first_party ~~~ precompiled ~~~ gui_system
+
+    class csCore,csLie,csCamera,csVisOpenGL consumer;
+    class eigen3,fmt,fmt_eigen,libassert,cpptrace,catch2,namedtype,pipes,tl_optional,tl_expected leaf;
+```
+
+**Notes:**
+
+- **`csCMake` is intentionally not in the graph**: it is build *tooling* used by every `csCMake`-based repo at **configure time** via `include(csCMake)` (e.g. [`workspace/csCore/CMakeLists.txt`](workspace/csCore/CMakeLists.txt#L5)) — it is checked out but not built, and it is not a runtime / install-time dependency of any installed library.
+- **csCore is a *solution* repo**: the first-party libraries consume its components rather than the umbrella target — `csLie`, `csCamera`, and `csVisOpenGL` all link `csCore::core` + `csCore::eigenUtils` (csLie tests additionally use `csCore::math` + `csCore::testUtils`).
+- **Qt6 is consumed only by `csVisOpenGL`** (`Core`, `Gui`, `OpenGL`, `Widgets`, `OpenGLWidgets`); the raw `OpenGL` dependency is satisfied by Linux system packages on the Ubuntu runners.
+- **`magic_enum` and `tclap` are published in the `3rdPartyBaseLibs` release but not referenced by any `cs*` `CMakeLists.txt`** — they are standalone leaf libraries in the 3rdParty recipe and are kept here for completeness (they ship in the precompiled bundle).
+- `cpptrace` is not linked directly by the `cs*` libraries — it is pulled in statically by `libassert` (see the 3rdPartyBaseLibs README for the internal 3rd-party dependency graph).
+- Compiled vs header-only in this recipe: `csCore` and `csLie` are header-only (`INTERFACE` targets); `csCamera` and `csVisOpenGL` compile static libraries (`STATIC` targets).
+- The authoritative list of precompiled packages (3rdPartyBaseLibs + csQt6) and their versions is in the **[Dependencies](#dependencies)** section; how they are wired into the first-party builds is shown in the **[Library Dependency Graph](#library-dependency-graph)** below.
 
 ---
 
@@ -146,11 +258,22 @@ without installing the full `csorchestrator` package.
 
 ## Repository Structure
 
+The repository ships the build recipe plus the **precompiled dependency bundle sources and manifests**
+consumed by the pipeline (downloaded libs + their manifests):
+
 ```text
 csBaseLibs/
 ├── csBaseLibs.py                                     # Main orchestrator recipe (entry point)
 ├── csBaseLibs/
-│   └── cs_orchestrator_config.py                     # Placeholder orchestrator config (empty for now)
+│   └── cs_orchestrator_config.py                     # Installs Linux system requirements (apt packages)
+├── libs/                                             # Precompiled dependencies downloaded by the recipe
+│   ├── 3rdPartyBaseLibs/                             # 3rdPartyBaseLibs dependency bundle
+│   │   └── cs_orchestrator_config.py
+│   ├── csQt6/                                        # Qt6 GUI toolkit dependency bundle
+│   │   └── cs_orchestrator_config.py
+│   └── manifests/                                    # Resolved package manifests (authoritative versions)
+│       ├── 3rdPartyBaseLibs-0.1.0.csOrchestratorManifest
+│       └── Qt6-v6.11.1.csOrchestratorManifest
 ├── tests/
 │   └── csBaseLibs/
 │       └── test_placeholder.py
@@ -163,6 +286,10 @@ csBaseLibs/
 ├── pyproject.toml                                    # Project metadata, ruff/mypy/pytest config
 └── .pre-commit-config.yaml                           # Pre-commit hooks
 ```
+
+The **per-variant `.tar.gz` archives and release bundle** (`csBaseLibs-<version>-bundle.tar.gz`) are
+**build-time outputs**, not part of the checked-in tree — they are produced by the CI workflow and
+published to the GitHub Release.
 
 ---
 
