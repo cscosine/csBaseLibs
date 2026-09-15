@@ -1,4 +1,4 @@
-"""Placeholder tests for the ``csBaseLibs`` package.
+"""Placeholder tests for the ``csfoundation`` package.
 
 Real recipe tests (repository list, version alignment, build-matrix
 invariants, ...) will be added later.

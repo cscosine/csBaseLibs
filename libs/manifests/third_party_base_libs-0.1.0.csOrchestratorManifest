@@ -1,12 +1,12 @@
 {
-  "csOrchestratorManifest": {
+  "csorchestrator_manifest": {
     "additional_files": [
-      "3rdPartyBaseLibs/cs_orchestrator_config.py"
+      "third_party_base_libs/csorchestrator_config.py"
     ],
     "manifest_version": "1.0",
-    "output_bundle_file_name": "3rdPartyBaseLibs-0.1.0-bundle.tar.gz",
-    "project_name": "3rdPartyBaseLibs",
-    "project_version": "__PROJECT_VERSION__",
+    "output_bundle_file_name": "third_party_base_libs-0.1.0-bundle.tar.gz",
+    "project_name": "third_party_base_libs",
+    "project_version": "0.1.0",
     "variants": [
       {
         "entries": [

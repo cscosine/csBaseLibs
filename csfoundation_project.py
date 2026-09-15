@@ -11,15 +11,14 @@ from csorchestrator.application.recipes.checkout_build import (
     create_and_upload_artifacts,
 )
 from csorchestrator.application.recipes.create_orchestrator import create_default_orchestrator
-from csorchestrator.application.recipes.manifest_github import (
-    download_csorchestrator_managed_libraries,
-)
 from csorchestrator.foundation.core.report import Report
 from csorchestrator.frontend.cscmake_presets.supported_variants import BuildConfig
-from csorchestrator.frontend.step.step_get_precompiled_lib_github import StepGetPrecompiledLibGithub
 
-from csBaseLibs.cs_orchestrator_config import install_requirements
-from libs.csQt6.cs_orchestrator_config import qt6_mapping
+from csfoundation.csorchestrator_config import (
+    CSFOUNDATION_PROJECT_NAME,
+    CSFOUNDATION_PROJECT_VERSION,
+    install_csfoundation_build_dependencies,
+)
 
 
 def create_orchestrator() -> OptionalOrchestratorWithReport:
@@ -39,10 +38,10 @@ def create_orchestrator() -> OptionalOrchestratorWithReport:
     }
 
     o = create_default_orchestrator(
-        name="csBaseLibs",
-        version="0.1.0",
+        name=CSFOUNDATION_PROJECT_NAME,
+        version=CSFOUNDATION_PROJECT_VERSION,
         base_install_dir=base_install_dir,
-        additional_files_list=[Path("csBaseLibs/cs_orchestrator_config.py")],
+        additional_files_list=[Path("csfoundation/csorchestrator_config.py")],
     )
 
     # ----------------------------------------------------------------
@@ -54,36 +53,19 @@ def create_orchestrator() -> OptionalOrchestratorWithReport:
     )
 
     # ----------------------------------------------------------------
-    install_requirements(o)
-
-    # ----------------------------------------------------------------
-    # Get Precompiled Libraries
+    # Install Requirements (Linux-Ubuntu) & Get Precompiled Libraries
     #
+    # The auto-install helper installs the Linux system requirements for the
+    # libraries being built and downloads, transitively and cross-repo, only
+    # the managed libraries they need from the third_party_base_libs and
+    # csqt6 releases (e.g. qt6 only when csVisOpenGL is built).
+    built_first_party_libs = [repo for repo, (_, config) in repos.items() if config is not None]
 
     report.append_report(
-        download_csorchestrator_managed_libraries(
+        install_csfoundation_build_dependencies(
             orchestrator=o,
-            base_url=StepGetPrecompiledLibGithub.GITHUB_BASE_URL_HTTPS,
-            org="cscosine",
-            git_repo="3rdPartyBaseLibs",
-            project_name="3rdPartyBaseLibs",
-            project_version="0.1.0",
-            release_tag="vX.X.X",
             base_libs_dir=base_libs_dir,
-        )
-    )
-
-    report.append_report(
-        download_csorchestrator_managed_libraries(
-            orchestrator=o,
-            base_url=StepGetPrecompiledLibGithub.GITHUB_BASE_URL_HTTPS,
-            org="cscosine",
-            git_repo="csQt6",
-            project_name="Qt6",
-            project_version="v6.11.1",
-            release_tag="vX.X.X",
-            base_libs_dir=base_libs_dir,
-            mapping_function=qt6_mapping,
+            required_libs=built_first_party_libs,
         )
     )
 
@@ -102,8 +84,8 @@ def create_orchestrator() -> OptionalOrchestratorWithReport:
 
     # single return point
     if report.has_errors():
-        return OptionalOrchestratorWithReport.createReport(report)
-    return OptionalOrchestratorWithReport.createResultAndReport(o, report)
+        return OptionalOrchestratorWithReport.create_report(report)
+    return OptionalOrchestratorWithReport.create_result_and_report(o, report)
 
 
 def main(argv: Sequence[str] | None = None) -> int:

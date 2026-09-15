@@ -3,9 +3,9 @@ requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "csBaseLibs"
+name = "csfoundation"
 version = "0.1.0"
-description = "Base C++ libraries build system for csOrchestrator"
+description = "Base C++ libraries build system for csorchestrator"
 authors = [
   { name = "cscosine-dev", email = "cscosine@gmail.com" }
 ]
@@ -13,7 +13,7 @@ readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.11"
 dependencies = [
-    # add csOrchestrator when available on pip
+    # add csorchestrator when available on pip
 ]
 
 [tool.setuptools.packages.find]
@@ -50,13 +50,19 @@ target-version = "py311"
 # B  -> Bugbear (common bug patterns)
 # UP -> modern Python suggestions
 # SIM -> catches simplifications
+# N  -> PEP8 naming conventions
+# C4 -> flake8-comprehensions (more Pythonic comprehensions)
+# W  -> Pycodestyle warnings
 select = [
     "E",
     "F",
     "I",
     "B",
     "UP",
-    "SIM"
+    "SIM",
+    "N",
+    "C4",
+    "W",
 ]
 
 [tool.ruff.format]

@@ -16,7 +16,7 @@ if ($LASTEXITCODE -ne 0) {
 
 python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
-python -m pip install -e "../csOrchestrator"
+python -m pip install -e "../csorchestrator"
 
 
 pre-commit install
